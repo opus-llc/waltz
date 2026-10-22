@@ -1,8 +1,10 @@
+import { requireEditor } from "@/lib/auth";
 import { categoriesWithCounts } from "@/lib/queries";
 import { saveCategory, deleteCategory } from "@/app/actions/admin";
 import { ActionForm } from "@/components/admin/ActionForm";
 
-export default function AdminCategories() {
+export default async function AdminCategories() {
+  await requireEditor();
   const cats = categoriesWithCounts();
   return (
     <div className="mx-auto max-w-3xl space-y-6">

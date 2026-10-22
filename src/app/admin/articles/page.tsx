@@ -1,9 +1,11 @@
+import { requireEditor } from "@/lib/auth";
 import Link from "next/link";
 import { desc, eq } from "drizzle-orm";
 import { db, schema } from "@/db";
 import { formatDate, nowMs } from "@/lib/format";
 
 export default async function AdminArticles({ searchParams }: PageProps<"/admin/articles">) {
+  await requireEditor();
   const type = (await searchParams).type === "page" ? "page" : "post";
   const rows = db
     .select({ a: schema.articles, cat: schema.categories.name, author: schema.users.name })

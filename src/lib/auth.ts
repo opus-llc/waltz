@@ -73,9 +73,15 @@ export async function requireAdmin(): Promise<SafeUser> {
   return user;
 }
 
-/** ログイン後の戻り先。外部サイトへ飛ばさない（"//evil" や "/\evil" を弾く） */
+/** ログイン後の戻り先。同じサイト内のパスだけを許す（"//evil"・"/\\evil"・制御文字入りの "/\t/evil" を弾く） */
 export function safeNext(next: unknown, fallback = "/community"): string {
-  if (typeof next !== "string") return fallback;
-  if (!next.startsWith("/") || next.startsWith("//") || next.includes("\\")) return fallback;
-  return next;
+  if (typeof next !== "string" || !next.startsWith("/") || /[\x00-\x1f\x7f\\]/.test(next)) return fallback;
+  try {
+    const base = "http://same.invalid";
+    const u = new URL(next, base);
+    if (u.origin !== base) return fallback;
+    return u.pathname + u.search + u.hash;
+  } catch {
+    return fallback;
+  }
 }

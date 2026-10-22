@@ -25,7 +25,11 @@ export async function signup(_: FormState, form: FormData): Promise<FormState> {
   if (db.select({ id: schema.users.id }).from(schema.users).where(eq(schema.users.handle, handle)).get())
     return { error: "このユーザー名は使われています" };
 
-  const isFirst = (db.select({ n: count() }).from(schema.users).get()?.n ?? 0) === 0;
+  // 管理者になれるのは ADMIN_EMAIL と一致する人だけ。未設定なら開発環境に限り最初の登録者を管理者にする
+  // （本番で「最初に登録した誰か」がサイトを乗っ取れないようにするため）
+  const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const noUsers = (db.select({ n: count() }).from(schema.users).get()?.n ?? 0) === 0;
+  const isFirst = adminEmail ? email === adminEmail : noUsers && process.env.NODE_ENV !== "production";
   const user = db
     .insert(schema.users)
     .values({

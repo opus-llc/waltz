@@ -32,7 +32,7 @@ npm run dev     # http://localhost:3000
 | sakura@example.com | 編集者 |
 | hikari@example.com | メンバー |
 
-サンプルデータを入れずに始める場合は `npm run setup` を飛ばしてください。**最初に登録したユーザーが自動で管理者になります。**
+サンプルデータを入れずに始める場合は `npm run setup` を飛ばしてください。開発環境（`npm run dev`）では、最初に登録したユーザーが管理者になります。
 
 サンプルデータを入れ直す: `npm run seed -- --force`（既存データは消えます）
 
@@ -43,7 +43,7 @@ npm run dev     # http://localhost:3000
 ```bash
 npm ci
 npm run build
-SITE_URL=https://example.com DATA_DIR=/var/lib/ensemble node .next/standalone/server.js
+SITE_URL=https://example.com ADMIN_EMAIL=you@example.com DATA_DIR=/var/lib/ensemble node .next/standalone/server.js
 ```
 
 `.next/standalone` を使う場合は、`.next/static`・`public`・`drizzle` を同じ階層にコピーしてください（Dockerfile と同じ構成）。
@@ -52,10 +52,14 @@ SITE_URL=https://example.com DATA_DIR=/var/lib/ensemble node .next/standalone/se
 
 ```bash
 docker build -t ensemble .
-docker run -p 3000:3000 -v ensemble-data:/data -e SITE_URL=https://example.com ensemble
+docker run -p 3000:3000 -v ensemble-data:/data -e SITE_URL=https://example.com -e ADMIN_EMAIL=you@example.com ensemble
 ```
 
 デモ環境として動かすときは `-e SEED_DEMO=1` を付けると、空の DB にサンプルデータが入ります。
+
+### 最初の管理者
+
+本番では、**環境変数 `ADMIN_EMAIL` と同じメールアドレスで登録した人だけが管理者になります。** 未設定のまま公開すると、誰も管理者になれません（公開直後に第三者が先に登録してサイトを乗っ取るのを防ぐため）。
 
 ### バックアップ
 
@@ -66,6 +70,7 @@ docker run -p 3000:3000 -v ensemble-data:/data -e SITE_URL=https://example.com e
 | 変数 | 説明 |
 |---|---|
 | `SITE_URL` | 公開URL。sitemap・RSS・llms.txt・OGP に使う |
+| `ADMIN_EMAIL` | このメールで登録した人を管理者にする（本番では必須） |
 | `DATA_DIR` | データ保存先（既定 `./data`） |
 | `DEMO_PASSWORD` | サンプルデータのパスワード |
 | `NEXT_PUBLIC_DEMO_MODE` | `1` でログイン画面にデモ表示 |

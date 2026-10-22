@@ -1,3 +1,4 @@
+import { requireEditor } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { db, schema } from "@/db";
@@ -8,6 +9,7 @@ import { ArticleEditor } from "@/components/admin/ArticleEditor";
 import { PartnerCard } from "@/components/admin/PartnerCard";
 
 export default async function EditArticle({ params, searchParams }: PageProps<"/admin/articles/[id]">) {
+  await requireEditor();
   const a = db.select().from(schema.articles).where(eq(schema.articles.id, Number((await params).id))).get();
   if (!a) notFound();
   const saved = (await searchParams).saved;

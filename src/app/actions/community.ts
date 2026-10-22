@@ -23,8 +23,9 @@ export async function createPost(_: FormState, form: FormData): Promise<FormStat
   if (body.length > 2000) return { error: "本文は2000文字以内にしてください" };
   if (communityId && !isMember(communityId, user.id)) return { error: "参加しているコミュニティにだけ投稿できます" };
   if (articleId) {
-    const a = db.select({ status: articles.status }).from(articles).where(eq(articles.id, articleId)).get();
-    if (!a || a.status !== "published") return { error: "共有できない記事です" };
+    const a = db.select({ status: articles.status, type: articles.type, publishedAt: articles.publishedAt }).from(articles).where(eq(articles.id, articleId)).get();
+    const live = a && a.type === "post" && a.status === "published" && a.publishedAt && a.publishedAt.getTime() <= Date.now();
+    if (!live) return { error: "共有できない記事です" };
   }
   db.insert(posts).values({ authorId: user.id, body, kind, communityId, articleId }).run();
   refresh();

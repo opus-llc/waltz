@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { and, count, desc, eq, gte } from "drizzle-orm";
 import { db, schema } from "@/db";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, requireEditor } from "@/lib/auth";
 import { timeAgo, nowMs } from "@/lib/format";
 import { Avatar } from "@/components/Avatar";
 import { PartnerCard } from "@/components/admin/PartnerCard";
 
 export default async function Dashboard({ searchParams }: PageProps<"/admin">) {
+  await requireEditor();
   const denied = (await searchParams).denied;
   const user = await getCurrentUser();
   const weekAgo = new Date(nowMs() - 7 * 86400_000);

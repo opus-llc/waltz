@@ -240,6 +240,7 @@ export function feed(opts: {
       arExcerpt: articles.excerpt,
       arCover: articles.coverUrl,
       arStatus: articles.status,
+      arPublishedAt: articles.publishedAt,
       likeCount: sql<number>`(select count(*) from ${likes} l where l.post_id = ${posts.id})`,
       commentCount: sql<number>`(select count(*) from ${comments} c where c.post_id = ${posts.id})`,
       likedByMe: sql<number>`exists(select 1 from ${likes} l where l.post_id = ${posts.id} and l.user_id = ${viewer})`,
@@ -262,7 +263,7 @@ export function feed(opts: {
     author: { id: r.aId, name: r.aName, handle: r.aHandle, headline: r.aHeadline, avatarColor: r.aColor },
     community: r.cSlug ? { slug: r.cSlug, name: r.cName!, icon: r.cIcon!, color: r.cColor! } : null,
     article:
-      r.arSlug && r.arStatus === "published"
+      r.arSlug && r.arStatus === "published" && r.arPublishedAt && r.arPublishedAt.getTime() <= Date.now()
         ? { slug: r.arSlug, title: r.arTitle!, excerpt: r.arExcerpt!, coverUrl: r.arCover! }
         : null,
     likeCount: Number(r.likeCount),
