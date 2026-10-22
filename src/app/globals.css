@@ -1,26 +1,112 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --accent: #4f46e5;
+  --bg: #ffffff;
+  --fg: #1c1f24;
+  --muted: #646a73;
+  --line: #e6e8ec;
+  --soft: #f4f5f7;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-accent: var(--accent);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-soft: var(--soft);
+  --font-sans: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", Meiryo, sans-serif;
+  --font-serif: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  line-break: strict;
+  font-feature-settings: "palt" 0;
+}
+
+/* 見出しは文節で折り返す（対応ブラウザのみ。未対応でも通常の折り返しに戻るだけ） */
+.headline {
+  word-break: auto-phrase;
+  text-wrap: balance;
+}
+
+@layer components {
+.accent-bg { background-color: var(--accent); }
+.accent-text { color: var(--accent); }
+.accent-border { border-color: var(--accent); }
+.accent-soft { background-color: color-mix(in srgb, var(--accent) 9%, white); }
+
+/* 記事本文 */
+.prose-ja {
+  font-size: 1.0625rem;
+  line-height: 2;
+  letter-spacing: 0.02em;
+}
+.prose-ja > * + * { margin-top: 1.4em; }
+.prose-ja h2 {
+  font-size: 1.45rem;
+  line-height: 1.5;
+  font-weight: 700;
+  margin-top: 2.6em;
+  padding-bottom: 0.4em;
+  border-bottom: 2px solid var(--line);
+  word-break: auto-phrase;
+  scroll-margin-top: 5rem;
+}
+.prose-ja h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-top: 2em;
+  scroll-margin-top: 5rem;
+}
+.prose-ja a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.prose-ja ul { list-style: disc; padding-left: 1.5em; }
+.prose-ja ol { list-style: decimal; padding-left: 1.5em; }
+.prose-ja li + li { margin-top: 0.4em; }
+.prose-ja blockquote {
+  border-left: 4px solid var(--accent);
+  background: var(--soft);
+  padding: 0.8em 1.2em;
+  color: var(--muted);
+}
+.prose-ja strong { font-weight: 700; background: linear-gradient(transparent 62%, color-mix(in srgb, var(--accent) 22%, transparent) 62%); }
+.prose-ja hr { border: 0; border-top: 1px solid var(--line); margin: 2.5em 0; }
+.prose-ja table { width: 100%; border-collapse: collapse; font-size: 0.95rem; line-height: 1.7; display: block; overflow-x: auto; }
+.prose-ja th, .prose-ja td { border: 1px solid var(--line); padding: 0.5em 0.8em; text-align: left; white-space: nowrap; }
+.prose-ja th { background: var(--soft); font-weight: 700; }
+.prose-ja code { background: var(--soft); padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.9em; }
+.prose-ja pre { background: #1c1f24; color: #f4f5f7; padding: 1em; border-radius: 8px; overflow-x: auto; line-height: 1.6; }
+.prose-ja pre code { background: transparent; padding: 0; }
+.prose-ja img { border-radius: 8px; }
+
+/* フォーム共通 */
+.field {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.65rem 0.8rem;
+  font-size: 16px; /* iOS で入力時に拡大されないよう16px */
+  background: white;
+}
+.field:focus { outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 1px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+  min-height: 44px; padding: 0 1.1rem; border-radius: 999px; font-weight: 700; font-size: 0.95rem;
+  transition: opacity .15s, background-color .15s;
+}
+.btn:disabled { opacity: .5; }
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { opacity: .9; }
+.btn-ghost { border: 1px solid var(--line); background: white; color: var(--fg); }
+.btn-ghost:hover { background: var(--soft); }
+.btn-sm { min-height: 44px; padding: 0 0.9rem; font-size: 0.85rem; }
+.label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 0.35rem; }
+.hint { font-size: 0.8rem; color: var(--muted); margin-top: 0.3rem; }
 }

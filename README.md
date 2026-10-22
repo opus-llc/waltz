@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ensemble（仮称）
 
-## Getting Started
+**オウンドメディアとコミュニティを、ひとつに。**
 
-First, run the development server:
+記事を読んだ人が、そのまま同じサイトで質問し、つながり、イベントに来る。
+ensemble は、簡易 CMS と会員コミュニティを1つのアプリで持てる、セルフホスト型のオープンソース基盤です。
+
+- **メディア**: 記事・固定ページ・カテゴリ・タグ、Markdown エディタ、画像アップロード、.md 取り込み、予約公開
+- **コミュニティ**: カード型タイムライン、テーマ別コミュニティ、イベント、肩書き付きプロフィール、フォロー・いいね・コメント・通知
+- **記事 ⇄ コミュニティ**: 記事ページから一言を添えてコミュニティへ共有。記事の下に「この記事について話す」
+- **SEO / AIO**: sitemap.xml・robots.txt・RSS・**llms.txt** を自動生成。記事ごとに構造化データ（JSON-LD）と OGP
+- **計測**: GA4 測定ID・外部タグURLを管理画面から設定
+- **運用が軽い**: データベースは SQLite のファイル1つ。外部サービスの契約は不要
+
+要件定義は [docs/requirements.md](docs/requirements.md) にあります。
+
+## はじめかた（3手順）
+
+Node.js 22 以上が必要です。
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run setup   # データベースを作り、サンプルデータを入れる
+npm run dev     # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+サンプルデータのログイン（パスワードはすべて `ensemble-demo`。`DEMO_PASSWORD` で変更可）:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| メール | 権限 |
+|---|---|
+| admin@example.com | 管理者 |
+| sakura@example.com | 編集者 |
+| hikari@example.com | メンバー |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+サンプルデータを入れずに始める場合は `npm run setup` を飛ばしてください。**最初に登録したユーザーが自動で管理者になります。**
 
-## Learn More
+サンプルデータを入れ直す: `npm run seed -- --force`（既存データは消えます）
 
-To learn more about Next.js, take a look at the following resources:
+## 本番で動かす
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Node.js で
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm ci
+npm run build
+SITE_URL=https://example.com DATA_DIR=/var/lib/ensemble node .next/standalone/server.js
+```
 
-## Deploy on Vercel
+`.next/standalone` を使う場合は、`.next/static`・`public`・`drizzle` を同じ階層にコピーしてください（Dockerfile と同じ構成）。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Docker で
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+docker build -t ensemble .
+docker run -p 3000:3000 -v ensemble-data:/data -e SITE_URL=https://example.com ensemble
+```
+
+デモ環境として動かすときは `-e SEED_DEMO=1` を付けると、空の DB にサンプルデータが入ります。
+
+### バックアップ
+
+`DATA_DIR`（既定 `./data`）の中身がすべてです。`ensemble.db`（記事・会員・投稿）と `uploads/`（画像）をコピーしてください。
+
+## 設定（環境変数）
+
+| 変数 | 説明 |
+|---|---|
+| `SITE_URL` | 公開URL。sitemap・RSS・llms.txt・OGP に使う |
+| `DATA_DIR` | データ保存先（既定 `./data`） |
+| `DEMO_PASSWORD` | サンプルデータのパスワード |
+| `NEXT_PUBLIC_DEMO_MODE` | `1` でログイン画面にデモ表示 |
+
+サイト名・テーマカラー・計測IDなどは管理画面の「サイト設定」から変えられます。
+
+## 構成
+
+| 層 | 採用 |
+|---|---|
+| フレームワーク | Next.js（App Router）＋ TypeScript |
+| DB | SQLite（better-sqlite3）＋ Drizzle ORM |
+| スタイル | Tailwind CSS |
+| Markdown | marked ＋ sanitize-html |
+| 認証 | メール＋パスワード（scrypt）、DB セッション |
+
+```
+src/
+  app/(media)/      公開側（トップ・記事・カテゴリ・タグ・固定ページ）
+  app/community/    コミュニティ
+  app/admin/        管理画面
+  app/actions/      サーバー側の処理（権限確認はここで行う）
+  db/schema.ts      テーブル定義（変更したら npm run db:generate）
+  lib/              認証・設定・Markdown・データ取得
+  lib/partners.ts   管理画面に出す相談先（フォークして差し替え可）
+scripts/seed.ts     サンプルデータ
+```
+
+## 開発
+
+```bash
+npm run typecheck
+npm run lint
+npm run db:generate   # schema.ts を変えたらマイグレーションを作る（起動時に自動適用）
+```
+
+## 次に作るもの
+
+ダイレクトメッセージ、通報、画像付き投稿、メンション、非公開コミュニティ、記事の取り込み API、Webhook（CRM/MA 連携）、OAuth ログイン。
+
+## ライセンス
+
+未定（公開前に確定します）。
