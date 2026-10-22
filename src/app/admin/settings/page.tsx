@@ -1,4 +1,5 @@
 import { requireAdmin } from "@/lib/auth";
+import { isDemo } from "@/lib/demo";
 import { getSettings } from "@/lib/settings";
 import { updateSettings } from "@/app/actions/admin";
 import { ActionForm } from "@/components/admin/ActionForm";
@@ -24,6 +25,7 @@ export default async function AdminSettings() {
         </section>
         <section className="space-y-4 rounded-2xl border border-line bg-white p-5">
           <h2 className="font-bold">計測</h2>
+          {isDemo() && <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">デモ環境では計測タグとサイトURLは保存されません。</p>}
           <div><label className="label" htmlFor="ga4Id">GA4 測定ID</label><input id="ga4Id" name="ga4Id" defaultValue={s.ga4Id} placeholder="G-XXXXXXXXXX" className="field font-mono" /></div>
           <div>
             <label className="label" htmlFor="externalTagUrl">外部計測タグのURL</label>

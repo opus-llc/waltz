@@ -1,4 +1,4 @@
-# ensemble 本番イメージ
+# waltz 本番イメージ
 # データ（SQLite と画像）は /data に保存する。ボリュームをマウントして使う。
 FROM node:24-slim AS deps
 WORKDIR /app

@@ -1,9 +1,9 @@
-# ensemble（仮称）
+# waltz（ワルツ）
 
 **オウンドメディアとコミュニティを、ひとつに。**
 
 記事を読んだ人が、そのまま同じサイトで質問し、つながり、イベントに来る。
-ensemble は、簡易 CMS と会員コミュニティを1つのアプリで持てる、セルフホスト型のオープンソース基盤です。
+waltz は、簡易 CMS と会員コミュニティを1つのアプリで持てる、セルフホスト型のオープンソース基盤です。
 
 - **メディア**: 記事・固定ページ・カテゴリ・タグ、Markdown エディタ、画像アップロード、.md 取り込み、予約公開
 - **コミュニティ**: カード型タイムライン、テーマ別コミュニティ、イベント、肩書き付きプロフィール、フォロー・いいね・コメント・通知
@@ -24,7 +24,7 @@ npm run setup   # データベースを作り、サンプルデータを入れ�
 npm run dev     # http://localhost:3000
 ```
 
-サンプルデータのログイン（パスワードはすべて `ensemble-demo`。`DEMO_PASSWORD` で変更可）:
+サンプルデータのログイン（パスワードはすべて `waltz-demo`。`DEMO_PASSWORD` で変更可）:
 
 | メール | 権限 |
 |---|---|
@@ -43,7 +43,7 @@ npm run dev     # http://localhost:3000
 ```bash
 npm ci
 npm run build
-SITE_URL=https://example.com ADMIN_EMAIL=you@example.com DATA_DIR=/var/lib/ensemble node .next/standalone/server.js
+SITE_URL=https://example.com ADMIN_EMAIL=you@example.com DATA_DIR=/var/lib/waltz node .next/standalone/server.js
 ```
 
 `.next/standalone` を使う場合は、`.next/static`・`public`・`drizzle` を同じ階層にコピーしてください（Dockerfile と同じ構成）。
@@ -51,11 +51,11 @@ SITE_URL=https://example.com ADMIN_EMAIL=you@example.com DATA_DIR=/var/lib/ensem
 ### Docker で
 
 ```bash
-docker build -t ensemble .
-docker run -p 3000:3000 -v ensemble-data:/data -e SITE_URL=https://example.com -e ADMIN_EMAIL=you@example.com ensemble
+docker build -t waltz .
+docker run -p 3000:3000 -v waltz-data:/data -e SITE_URL=https://example.com -e ADMIN_EMAIL=you@example.com waltz
 ```
 
-デモ環境として動かすときは `-e SEED_DEMO=1` を付けると、空の DB にサンプルデータが入ります。
+空の DB にサンプルデータを入れるときは `-e SEED_DEMO=1` を付けます。誰でも触れる公開デモにするときは `-e DEMO_MODE=1` を付けます（毎朝4時に初期化され、計測タグの設定は無効になります）。
 
 ### 最初の管理者
 
@@ -63,7 +63,7 @@ docker run -p 3000:3000 -v ensemble-data:/data -e SITE_URL=https://example.com -
 
 ### バックアップ
 
-`DATA_DIR`（既定 `./data`）の中身がすべてです。`ensemble.db`（記事・会員・投稿）と `uploads/`（画像）をコピーしてください。
+`DATA_DIR`（既定 `./data`）の中身がすべてです。`waltz.db`（記事・会員・投稿）と `uploads/`（画像）をコピーしてください。
 
 ## 設定（環境変数）
 
@@ -73,7 +73,7 @@ docker run -p 3000:3000 -v ensemble-data:/data -e SITE_URL=https://example.com -
 | `ADMIN_EMAIL` | このメールで登録した人を管理者にする（本番では必須） |
 | `DATA_DIR` | データ保存先（既定 `./data`） |
 | `DEMO_PASSWORD` | サンプルデータのパスワード |
-| `NEXT_PUBLIC_DEMO_MODE` | `1` でログイン画面にデモ表示 |
+| `DEMO_MODE` | `1` で公開デモ用の動きにする（毎朝4時にサンプルデータへ初期化・計測タグ無効・検索エンジン除外・ログイン画面にデモ用アカウントを表示） |
 
 サイト名・テーマカラー・計測IDなどは管理画面の「サイト設定」から変えられます。
 
@@ -111,6 +111,10 @@ npm run db:generate   # schema.ts を変えたらマイグレーションを作�
 
 ダイレクトメッセージ、通報、画像付き投稿、メンション、非公開コミュニティ、記事の取り込み API、Webhook（CRM/MA 連携）、OAuth ログイン。
 
+## 商用サポート
+
+waltz は [opus合同会社](https://opus-inc.jp/) が開発しています。デザインの作り込み、会員機能の追加、既存システムとの連携などのカスタマイズ開発や、記事づくりの支援（[sonata](https://sonata-ai.app/)）のご相談は opus までどうぞ。
+
 ## ライセンス
 
-未定（公開前に確定します）。
+[MIT](LICENSE)

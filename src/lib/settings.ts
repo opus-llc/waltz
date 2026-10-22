@@ -3,7 +3,7 @@ import { cache } from "react";
 import { db, schema } from "@/db";
 
 export const DEFAULT_SETTINGS = {
-  siteName: "ensemble",
+  siteName: "waltz",
   tagline: "読む人が、話す人になる。",
   description: "オウンドメディアとコミュニティをひとつに。",
   accentColor: "#4f46e5",

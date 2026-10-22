@@ -3,7 +3,9 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
 import { db, schema, UPLOAD_DIR } from "@/db";
+import { count } from "drizzle-orm";
 import { getCurrentUser, canEdit } from "@/lib/auth";
+import { isDemo } from "@/lib/demo";
 
 const MAX = 5 * 1024 * 1024;
 
@@ -20,6 +22,8 @@ function sniff(buf: Buffer): { ext: string; mime: string } | null {
 export async function POST(req: Request) {
   const user = await getCurrentUser();
   if (!canEdit(user)) return NextResponse.json({ error: "権限がありません" }, { status: 403 });
+  if (isDemo() && (db.select({ n: count() }).from(schema.mediaFiles).get()?.n ?? 0) >= 50)
+    return NextResponse.json({ error: "デモ環境のアップロード上限に達しました（毎朝4時に初期化されます）" }, { status: 429 });
   const form = await req.formData();
   const file = form.get("file");
   if (!(file instanceof File)) return NextResponse.json({ error: "ファイルがありません" }, { status: 400 });

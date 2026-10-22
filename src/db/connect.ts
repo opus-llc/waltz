@@ -6,7 +6,7 @@ import path from "node:path";
 import * as schema from "./schema";
 
 export const DATA_DIR = path.resolve(/* turbopackIgnore: true */ process.cwd(), process.env.DATA_DIR ?? "data");
-export const DB_PATH = process.env.DATABASE_PATH ?? path.join(DATA_DIR, "ensemble.db");
+export const DB_PATH = process.env.DATABASE_PATH ?? path.join(DATA_DIR, "waltz.db");
 export const UPLOAD_DIR = path.join(DATA_DIR, "uploads");
 
 export type DB = BetterSQLite3Database<typeof schema>;

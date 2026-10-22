@@ -8,7 +8,7 @@ import { db, schema } from "@/db";
 import type { User } from "@/db/schema";
 export { hashPassword, verifyPassword } from "./password";
 
-const COOKIE = "ens_session";
+const COOKIE = "waltz_session";
 const SESSION_DAYS = 30;
 
 const sha256 = (v: string) => crypto.createHash("sha256").update(v).digest("hex");

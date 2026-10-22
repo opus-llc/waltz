@@ -33,7 +33,7 @@ export function SiteFooter() {
       <div className="border-t border-line">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-4 text-xs text-muted">
           <span>{s.footerNote || `© ${s.siteName}`}</span>
-          <span>Powered by <span className="font-bold">ensemble</span>（オープンソース）</span>
+          <span>Powered by <span className="font-bold">waltz</span>（オープンソース）</span>
         </div>
       </div>
     </footer>

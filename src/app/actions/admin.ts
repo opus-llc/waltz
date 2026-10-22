@@ -6,6 +6,7 @@ import { and, eq, ne } from "drizzle-orm";
 import { db, schema } from "@/db";
 import { requireAdmin, requireEditor } from "@/lib/auth";
 import { saveSettings, type Settings } from "@/lib/settings";
+import { isDemo } from "@/lib/demo";
 import { isValidSlug, parseJstLocal, slugify } from "@/lib/format";
 import { plainExcerpt } from "@/lib/markdown";
 import type { FormState } from "./auth";
@@ -196,6 +197,12 @@ export async function updateSettings(_: FormState, form: FormData): Promise<Form
   if (next.ga4Id && !/^G-[A-Z0-9]{4,20}$/.test(next.ga4Id)) return { error: "GA4 測定IDは G- から始まる形式で入力してください" };
   if (next.externalTagUrl && !/^https:\/\/[^\s"'<>]+$/.test(next.externalTagUrl))
     return { error: "外部タグのURLは https:// から始まるURLにしてください" };
+  if (isDemo()) {
+    // デモ環境では計測タグとURLを変えさせない（誰でも管理者でログインできるため）
+    delete next.ga4Id;
+    delete next.externalTagUrl;
+    delete next.siteUrl;
+  }
   saveSettings(next);
   refresh();
   return { ok: "保存しました" };
