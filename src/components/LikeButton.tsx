@@ -1,11 +1,12 @@
 "use client";
 
 import { useOptimistic, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { toggleLike } from "@/app/actions/community";
 
 export function LikeButton({ postId, liked, count, loggedIn }: { postId: number; liked: boolean; count: number; loggedIn: boolean }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [pending, start] = useTransition();
   const [state, setState] = useOptimistic({ liked, count }, (s) => ({ liked: !s.liked, count: s.count + (s.liked ? -1 : 1) }));
   return (
@@ -16,7 +17,7 @@ export function LikeButton({ postId, liked, count, loggedIn }: { postId: number;
       disabled={pending}
       onClick={() => {
         if (!loggedIn) {
-          router.push(`/login?next=${encodeURIComponent(location.pathname)}`);
+          router.push(`/login?next=${encodeURIComponent(pathname)}`);
           return;
         }
         start(async () => {

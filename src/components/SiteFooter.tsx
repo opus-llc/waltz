@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getSettings } from "@/lib/settings";
 import { categoriesWithCounts } from "@/lib/queries";
+import { withBase } from "@/lib/base-path";
 
 export function SiteFooter() {
   const s = getSettings();
@@ -26,7 +27,7 @@ export function SiteFooter() {
             <li><Link href="/p/about" className="hover:underline">このサイトについて</Link></li>
             <li><Link href="/community" className="hover:underline">コミュニティ</Link></li>
             <li><Link href="/p/privacy" className="hover:underline">プライバシーポリシー</Link></li>
-            <li><a href="/feed.xml" className="hover:underline">RSS</a></li>
+            <li><a href={withBase("/feed.xml")} className="hover:underline">RSS</a></li>
           </ul>
         </div>
       </div>

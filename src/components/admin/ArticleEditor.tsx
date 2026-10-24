@@ -3,6 +3,7 @@
 import { useActionState, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { saveArticle, previewMarkdown } from "@/app/actions/admin";
+import { withBase } from "@/lib/base-path";
 
 type Initial = {
   id?: number;
@@ -25,7 +26,7 @@ type Initial = {
 async function upload(file: File): Promise<string> {
   const fd = new FormData();
   fd.append("file", file);
-  const res = await fetch("/api/upload", { method: "POST", body: fd });
+  const res = await fetch(withBase("/api/upload"), { method: "POST", body: fd });
   const json = await res.json();
   if (!res.ok) throw new Error(json.error ?? "アップロードに失敗しました");
   return json.url as string;
@@ -247,7 +248,7 @@ export function ArticleEditor({
           <p className="label !mb-0">アイキャッチ画像</p>
           {coverUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={coverUrl} alt="" className="aspect-[1200/630] w-full rounded-lg object-cover" />
+            <img src={withBase(coverUrl)} alt="" className="aspect-[1200/630] w-full rounded-lg object-cover" />
           )}
           <input name="coverUrl" value={coverUrl} onChange={(e) => setCoverUrl(e.target.value)} placeholder="画像URL（空欄なら自動の表紙）" aria-label="アイキャッチ画像のURL" className="field text-sm" />
           <label className="btn btn-ghost btn-sm w-full cursor-pointer">

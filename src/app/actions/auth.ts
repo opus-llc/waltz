@@ -1,15 +1,23 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+import { hit, clear } from "@/lib/rate-limit";
 import { eq, count } from "drizzle-orm";
 import { db, schema } from "@/db";
 import { createSession, destroySession, hashPassword, verifyPassword, safeNext } from "@/lib/auth";
 
 export type FormState = { error?: string; ok?: string } | undefined;
 
+async function clientIp() {
+  const h = await headers();
+  return h.get("x-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip") || "unknown";
+}
+
 const COLORS = ["#0f766e", "#2563eb", "#7c3aed", "#db2777", "#ea580c", "#16a34a", "#0891b2", "#475569"];
 
 export async function signup(_: FormState, form: FormData): Promise<FormState> {
+  if (!hit(`signup:${await clientIp()}`, 5, 60 * 60_000).ok) return { error: "登録の試行が多すぎます。時間をおいてお試しください" };
   const name = String(form.get("name") ?? "").trim();
   const email = String(form.get("email") ?? "").trim().toLowerCase();
   const handle = String(form.get("handle") ?? "").trim().toLowerCase();
@@ -50,10 +58,18 @@ export async function signup(_: FormState, form: FormData): Promise<FormState> {
 export async function login(_: FormState, form: FormData): Promise<FormState> {
   const email = String(form.get("email") ?? "").trim().toLowerCase();
   const password = String(form.get("password") ?? "");
+  // 同じ接続元から15分に20回、同じアカウントへ15分に10回まで
+  const ip = await clientIp();
+  const byIp = hit(`login-ip:${ip}`, 20, 15 * 60_000);
+  const byAccount = hit(`login-acct:${email}`, 10, 15 * 60_000);
+  if (!byIp.ok || !byAccount.ok) {
+    return { error: `ログインの試行が多すぎます。${Math.ceil(Math.max(byIp.retryAfterSec, byAccount.retryAfterSec) / 60)}分ほどおいてお試しください` };
+  }
   const user = db.select().from(schema.users).where(eq(schema.users.email, email)).get();
   if (!user || !verifyPassword(password, user.passwordHash)) {
     return { error: "メールアドレスかパスワードが違います" };
   }
+  clear(`login-acct:${email}`);
   await createSession(user.id);
   redirect(safeNext(form.get("next")));
 }

@@ -8,6 +8,10 @@ RUN npm ci
 
 FROM deps AS build
 WORKDIR /app
+# サブディレクトリに置く場合（例: /demo）と、前段の中継サーバーのドメイン。どちらもビルド時に固定される
+ARG NEXT_PUBLIC_BASE_PATH=""
+ARG SERVER_ACTIONS_ALLOWED_ORIGINS=""
+ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH SERVER_ACTIONS_ALLOWED_ORIGINS=$SERVER_ACTIONS_ALLOWED_ORIGINS
 COPY . .
 RUN npm run build && npm run build:seed
 

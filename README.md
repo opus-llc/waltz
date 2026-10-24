@@ -63,6 +63,10 @@ docker run -p 3000:3000 -v waltz-data:/data -e SITE_URL=https://example.com -e A
 
 本番では、**環境変数 `ADMIN_EMAIL` と同じメールアドレスで登録した人だけが管理者になります。** 未設定のまま公開すると、誰も管理者になれません（公開直後に第三者が先に登録してサイトを乗っ取るのを防ぐため）。
 
+### サブディレクトリに置く
+
+`https://example.com/media` のように配下へ置く場合は、ビルド時に `NEXT_PUBLIC_BASE_PATH=/media` を指定します（Docker では `--build-arg`）。別ドメインの中継サーバー越しに使う場合は、そのドメインを `SERVER_ACTIONS_ALLOWED_ORIGINS` に入れてください（フォーム送信の送信元確認に使います）。
+
 ### バックアップ
 
 `DATA_DIR`（既定 `./data`）の中身がすべてです。`waltz.db`（記事・会員・投稿）と `uploads/`（画像）をコピーしてください。
@@ -74,6 +78,8 @@ docker run -p 3000:3000 -v waltz-data:/data -e SITE_URL=https://example.com -e A
 | `SITE_URL` | 公開URL。sitemap・RSS・llms.txt・OGP に使う |
 | `ADMIN_EMAIL` | このメールで登録した人を管理者にする（本番では必須） |
 | `DATA_DIR` | データ保存先（既定 `./data`） |
+| `NEXT_PUBLIC_BASE_PATH` | サブディレクトリに置くときの接頭辞（ビルド時） |
+| `SERVER_ACTIONS_ALLOWED_ORIGINS` | 中継サーバーのドメイン（カンマ区切り・ビルド時） |
 | `DEMO_PASSWORD` | サンプルデータのパスワード |
 | `DEMO_MODE` | `1` で公開デモ用の動きにする（毎朝4時にサンプルデータへ初期化・計測タグ無効・検索エンジン除外・ログイン画面にデモ用アカウントを表示） |
 

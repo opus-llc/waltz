@@ -1,3 +1,5 @@
+import { withBase } from "@/lib/base-path";
+
 /* アイキャッチ画像。未設定ならカテゴリ名とタイトルから表紙を描く（外部画像に依存しない） */
 const PALETTES = [
   ["#0f766e", "#99f6e4"],
@@ -31,7 +33,7 @@ export function ArticleCover({
 }) {
   if (coverUrl) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={coverUrl} alt={coverAlt ?? ""} className={`aspect-[1200/630] w-full object-cover ${className}`} loading="lazy" />;
+    return <img src={withBase(coverUrl)} alt={coverAlt ?? ""} className={`aspect-[1200/630] w-full object-cover ${className}`} loading="lazy" />;
   }
   const [dark, light] = PALETTES[hash(title) % PALETTES.length];
   const text = size === "lg" ? "text-2xl sm:text-3xl" : size === "md" ? "text-lg" : "text-sm";

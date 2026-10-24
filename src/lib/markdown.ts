@@ -1,5 +1,6 @@
 import { Marked } from "marked";
 import sanitizeHtml from "sanitize-html";
+import { withBase } from "./base-path";
 
 export type TocItem = { id: string; text: string; level: number };
 
@@ -41,9 +42,13 @@ export function renderMarkdown(md: string): { html: string; toc: TocItem[] } {
     },
     allowedSchemes: ["http", "https", "mailto"],
     allowedSchemesByTag: { img: ["http", "https"] },
+    allowedSchemesAppliedToAttributes: ["href", "src", "cite"],
     allowProtocolRelative: false,
     transformTags: {
-      img: (tagName, attribs) => ({ tagName, attribs: { ...attribs, loading: "lazy" } }),
+      img: (tagName, attribs) => ({
+        tagName,
+        attribs: { ...attribs, src: attribs.src?.startsWith("/uploads/") ? withBase(attribs.src) : attribs.src, loading: "lazy" },
+      }),
       a: (tagName, attribs) => {
         const external = /^https?:\/\//.test(attribs.href ?? "");
         return {
