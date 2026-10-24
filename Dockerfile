@@ -1,6 +1,6 @@
 # waltz 本番イメージ
 # データ（SQLite と画像）は /data に保存する。ボリュームをマウントして使う。
-FROM node:24-slim AS deps
+FROM node:25-slim AS deps
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ && rm -rf /var/lib/apt/lists/*
 COPY package.json package-lock.json ./
@@ -15,7 +15,7 @@ ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH SERVER_ACTIONS_ALLOWED_ORIGINS=
 COPY . .
 RUN npm run build && npm run build:seed
 
-FROM node:24-slim AS run
+FROM node:25-slim AS run
 WORKDIR /app
 ENV NODE_ENV=production \
     PORT=3000 \
