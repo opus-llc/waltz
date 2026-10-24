@@ -12,7 +12,7 @@ waltz は、簡易 CMS と会員コミュニティを1つのアプリで持て�
 - **計測**: GA4 測定ID・外部タグURLを管理画面から設定
 - **運用が軽い**: データベースは SQLite のファイル1つ。外部サービスの契約は不要
 
-**デモ**: https://waltz-demo-1064284533004.asia-northeast1.run.app （毎朝4時にサンプルデータへ初期化。ログイン情報はログイン画面に表示）
+**公式サイト**: https://waltz.sonata-ai.app ／ **デモ**: https://waltz.sonata-ai.app/demo （毎朝4時にサンプルデータへ初期化。ログイン情報はログイン画面に表示）
 
 要件定義は [docs/requirements.md](docs/requirements.md) にあります。
 
