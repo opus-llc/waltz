@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0"
+	xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:wp="http://wordpress.org/export/1.2/"
+>
+<channel>
+	<title>日本語スラッグのブログ</title>
+	<link>https://jp.example.jp/blog</link>
+	<wp:wxr_version>1.2</wp:wxr_version>
+	<wp:base_site_url>https://jp.example.jp/blog</wp:base_site_url>
+	<wp:base_blog_url>https://jp.example.jp/blog</wp:base_blog_url>
+	<wp:author><wp:author_login><![CDATA[管理人]]></wp:author_login><wp:author_email><![CDATA[kanri@jp.example.jp]]></wp:author_email><wp:author_display_name><![CDATA[管理人さん]]></wp:author_display_name></wp:author>
+	<wp:category><wp:term_id>7</wp:term_id><wp:category_nicename><![CDATA[%e3%81%8a%e7%9f%a5%e3%82%89%e3%81%9b]]></wp:category_nicename><wp:cat_name><![CDATA[お知らせ]]></wp:cat_name></wp:category>
+	<wp:category><wp:term_id>8</wp:term_id><wp:category_nicename><![CDATA[%e7%b5%8c%e7%90%86]]></wp:category_nicename><wp:cat_name><![CDATA[経理]]></wp:cat_name></wp:category>
+
+	<item>
+		<title>日本語のスラッグの記事</title>
+		<link>https://jp.example.jp/blog/2024/05/%e6%97%a5%e6%9c%ac%e8%aa%9e%e3%81%ae%e8%a8%98%e4%ba%8b/</link>
+		<dc:creator><![CDATA[管理人]]></dc:creator>
+		<content:encoded><![CDATA[<p>日本語スラッグ。<a href="https://jp.example.jp/blog/2024/06/2024%e5%b9%b4%e3%81%ae%e3%81%be%e3%81%a8%e3%82%81/">まとめ記事</a>と<a href="https://jp.example.jp/blog/?p=402">ID指定のリンク</a>。</p>]]></content:encoded>
+		<wp:post_id>401</wp:post_id>
+		<wp:post_date_gmt><![CDATA[2024-05-10 00:00:00]]></wp:post_date_gmt>
+		<wp:post_name><![CDATA[%e6%97%a5%e6%9c%ac%e8%aa%9e%e3%81%ae%e8%a8%98%e4%ba%8b]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+		<category domain="category" nicename="%e3%81%8a%e7%9f%a5%e3%82%89%e3%81%9b"><![CDATA[お知らせ]]></category>
+		<category domain="post_tag" nicename="%e3%82%bf%e3%82%b0"><![CDATA[タグ]]></category>
+	</item>
+
+	<item>
+		<title>2024年のまとめ</title>
+		<link>https://jp.example.jp/blog/2024/06/2024%e5%b9%b4%e3%81%ae%e3%81%be%e3%81%a8%e3%82%81/</link>
+		<dc:creator><![CDATA[管理人]]></dc:creator>
+		<content:encoded><![CDATA[一年をふりかえります。]]></content:encoded>
+		<wp:post_id>402</wp:post_id>
+		<wp:post_date_gmt><![CDATA[2024-06-30 00:00:00]]></wp:post_date_gmt>
+		<wp:post_name><![CDATA[2024%e5%b9%b4%e3%81%ae%e3%81%be%e3%81%a8%e3%82%81]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+		<category domain="category" nicename="%e7%b5%8c%e7%90%86"><![CDATA[経理]]></category>
+	</item>
+
+	<item>
+		<title>About（既存の固定ページとスラッグが重なる）</title>
+		<link>https://jp.example.jp/blog/about/</link>
+		<dc:creator><![CDATA[管理人]]></dc:creator>
+		<content:encoded><![CDATA[既存の about と重なる。]]></content:encoded>
+		<wp:post_id>403</wp:post_id>
+		<wp:post_date_gmt><![CDATA[2024-01-01 00:00:00]]></wp:post_date_gmt>
+		<wp:post_name><![CDATA[about]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_type><![CDATA[page]]></wp:post_type>
+	</item>
+
+	<item>
+		<title>月次決算（既存記事とスラッグが重なる）</title>
+		<link>https://jp.example.jp/blog/2024/02/monthly-close-3days/</link>
+		<dc:creator><![CDATA[管理人]]></dc:creator>
+		<content:encoded><![CDATA[既存の記事と重なる。]]></content:encoded>
+		<wp:post_id>404</wp:post_id>
+		<wp:post_date_gmt><![CDATA[2024-02-01 00:00:00]]></wp:post_date_gmt>
+		<wp:post_name><![CDATA[monthly-close-3days]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+	</item>
+
+	<item>
+		<title>お問い合わせ（日本語スラッグの固定ページ）</title>
+		<link>https://jp.example.jp/blog/%e3%81%8a%e5%95%8f%e3%81%84%e5%90%88%e3%82%8f%e3%81%9b/</link>
+		<dc:creator><![CDATA[管理人]]></dc:creator>
+		<content:encoded><![CDATA[[mwform_formkey key="10"]]]></content:encoded>
+		<wp:post_id>405</wp:post_id>
+		<wp:post_date_gmt><![CDATA[2024-01-02 00:00:00]]></wp:post_date_gmt>
+		<wp:post_name><![CDATA[%e3%81%8a%e5%95%8f%e3%81%84%e5%90%88%e3%82%8f%e3%81%9b]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_type><![CDATA[page]]></wp:post_type>
+	</item>
+
+	<item>
+		<title>Ｆｕｌｌ－ｗｉｄｔｈ　ＡＢＣ（全角英数のスラッグ）</title>
+		<link>https://jp.example.jp/blog/2024/03/%ef%bd%86%ef%bd%95%ef%bd%8c%ef%bd%8c/</link>
+		<dc:creator><![CDATA[管理人]]></dc:creator>
+		<content:encoded><![CDATA[全角]]></content:encoded>
+		<wp:post_id>406</wp:post_id>
+		<wp:post_date_gmt><![CDATA[2024-03-01 00:00:00]]></wp:post_date_gmt>
+		<wp:post_name><![CDATA[%ef%bd%86%ef%bd%95%ef%bd%8c%ef%bd%8c]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+	</item>
+</channel>
+</rss>

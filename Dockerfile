@@ -13,7 +13,7 @@ ARG NEXT_PUBLIC_BASE_PATH=""
 ARG SERVER_ACTIONS_ALLOWED_ORIGINS=""
 ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH SERVER_ACTIONS_ALLOWED_ORIGINS=$SERVER_ACTIONS_ALLOWED_ORIGINS
 COPY . .
-RUN npm run build && npm run build:seed
+RUN npm run build && npm run build:seed && npm run build:import
 
 FROM node:24-slim AS run
 WORKDIR /app
@@ -26,6 +26,7 @@ COPY --from=build /app/.next/static ./.next/static
 COPY --from=build /app/public ./public
 COPY --from=build /app/drizzle ./drizzle
 COPY --from=build /app/dist/seed.cjs ./seed.cjs
+COPY --from=build /app/dist/import-wordpress.cjs ./import-wordpress.cjs
 COPY --from=build /app/node_modules/better-sqlite3 ./node_modules/better-sqlite3
 COPY docker-entrypoint.sh ./
 RUN mkdir -p /data && chown -R node:node /data /app

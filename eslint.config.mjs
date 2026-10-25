@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // esbuild で束ねた CLI（npm run build:seed / build:import）
+    "dist/**",
   ]),
 ]);
 

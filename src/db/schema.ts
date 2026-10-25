@@ -252,6 +252,15 @@ export const mediaFiles = sqliteTable(
   (t) => [uniqueIndex("media_filename_idx").on(t.filename)],
 );
 
+/** 旧サイト（WordPress など）の URL から新しい URL への 301 転送。from_path は basePath を除いた、デコード済みのパス */
+export const redirects = sqliteTable("redirects", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  fromPath: text("from_path").notNull().unique(),
+  toPath: text("to_path").notNull(),
+  source: text("source").notNull().default("manual"),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(now),
+});
+
 export type User = typeof users.$inferSelect;
 export type Article = typeof articles.$inferSelect;
 export type Community = typeof communities.$inferSelect;

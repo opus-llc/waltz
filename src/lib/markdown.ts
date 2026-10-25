@@ -51,9 +51,11 @@ export function renderMarkdown(md: string): { html: string; toc: TocItem[] } {
       }),
       a: (tagName, attribs) => {
         const external = /^https?:\/\//.test(attribs.href ?? "");
+        // サイト内の絶対パス（/articles/... など）はサブディレクトリ設置時の接頭辞を付ける
+        const href = attribs.href?.startsWith("/") ? withBase(attribs.href) : attribs.href;
         return {
           tagName,
-          attribs: external ? { ...attribs, target: "_blank", rel: "noopener noreferrer" } : attribs,
+          attribs: external ? { ...attribs, target: "_blank", rel: "noopener noreferrer" } : { ...attribs, ...(href ? { href } : {}) },
         };
       },
     },

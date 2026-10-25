@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0"
+	xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:wp="http://wordpress.org/export/1.2/"
+>
+<channel>
+	<title>Classic Blog &amp; Notes</title>
+	<link>https://old-blog.example.com</link>
+	<description>クラシックエディタのブログ</description>
+	<language>ja</language>
+	<wp:wxr_version>1.2</wp:wxr_version>
+	<wp:base_site_url>https://old-blog.example.com</wp:base_site_url>
+	<wp:base_blog_url>https://old-blog.example.com</wp:base_blog_url>
+	<wp:author><wp:author_id>1</wp:author_id><wp:author_login><![CDATA[taro]]></wp:author_login><wp:author_email><![CDATA[taro@example.com]]></wp:author_email><wp:author_display_name><![CDATA[山田 太郎]]></wp:author_display_name></wp:author>
+	<wp:author><wp:author_id>2</wp:author_id><wp:author_login><![CDATA[demo]]></wp:author_login><wp:author_email><![CDATA[ADMIN@example.com]]></wp:author_email><wp:author_display_name><![CDATA[既存の管理者と同じメール]]></wp:author_display_name></wp:author>
+	<wp:category><wp:term_id>3</wp:term_id><wp:category_nicename><![CDATA[news]]></wp:category_nicename><wp:category_parent><![CDATA[]]></wp:category_parent><wp:cat_name><![CDATA[お知らせ]]></wp:cat_name></wp:category>
+	<wp:category><wp:term_id>4</wp:term_id><wp:category_nicename><![CDATA[tips]]></wp:category_nicename><wp:category_parent><![CDATA[]]></wp:category_parent><wp:cat_name><![CDATA[Tips]]></wp:cat_name></wp:category>
+	<wp:tag><wp:term_id>5</wp:term_id><wp:tag_slug><![CDATA[wordpress]]></wp:tag_slug><wp:tag_name><![CDATA[WordPress]]></wp:tag_name></wp:tag>
+
+	<item>
+		<title>Don&#8217;t Panic &amp; Migrate</title>
+		<link>https://old-blog.example.com/2024/05/dont-panic/</link>
+		<pubDate>Wed, 01 May 2024 03:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[taro]]></dc:creator>
+		<guid isPermaLink="false">https://old-blog.example.com/?p=101</guid>
+		<description></description>
+		<content:encoded><![CDATA[WordPress から移る手順をまとめました。
+改行は br になります。
+
+2段落目です。<strong>太字</strong>と<a href="https://old-blog.example.com/2024/06/second-post/">次の記事</a>へのリンク。
+
+[caption id="attachment_900" align="alignnone" width="300"]<img src="https://www.gstatic.com/webp/gallery/2.jpg" alt="景色" width="300" height="200" /> キャプションの文[/caption]
+
+[gallery ids="900,901"]
+
+[contact-form-7 id="12" title="お問い合わせ"]
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0"></iframe>
+
+<script>alert("xss")</script>
+
+[note]本文中の[注]は誤検知しない[/note]
+
+<pre><code>[shortcode_in_code] は無視
+&lt;script&gt; も文字のまま</code></pre>
+
+<ul>
+<li>項目1</li>
+<li>項目2</li>
+</ul>
+
+<!--more-->
+
+最後の段落。]]></content:encoded>
+		<excerpt:encoded><![CDATA[移行の手順の抜粋です。]]></excerpt:encoded>
+		<wp:post_id>101</wp:post_id>
+		<wp:post_date><![CDATA[2024-05-01 12:00:00]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[2024-05-01 03:00:00]]></wp:post_date_gmt>
+		<wp:comment_status><![CDATA[open]]></wp:comment_status>
+		<wp:post_name><![CDATA[dont-panic]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+		<wp:is_sticky>1</wp:is_sticky>
+		<category domain="category" nicename="news"><![CDATA[お知らせ]]></category>
+		<category domain="category" nicename="tips"><![CDATA[Tips]]></category>
+		<category domain="post_tag" nicename="wordpress"><![CDATA[WordPress]]></category>
+		<category domain="post_tag" nicename="%e7%a7%bb%e8%a1%8c"><![CDATA[移行]]></category>
+		<wp:postmeta><wp:meta_key><![CDATA[_thumbnail_id]]></wp:meta_key><wp:meta_value><![CDATA[901]]></wp:meta_value></wp:postmeta>
+		<wp:postmeta><wp:meta_key><![CDATA[_yoast_wpseo_title]]></wp:meta_key><wp:meta_value><![CDATA[%%title%% %%sep%% %%sitename%%]]></wp:meta_value></wp:postmeta>
+		<wp:postmeta><wp:meta_key><![CDATA[_yoast_wpseo_metadesc]]></wp:meta_key><wp:meta_value><![CDATA[検索結果に出す説明文]]></wp:meta_value></wp:postmeta>
+		<wp:comment>
+			<wp:comment_id>1</wp:comment_id>
+			<wp:comment_author><![CDATA[佐藤]]></wp:comment_author>
+			<wp:comment_author_email><![CDATA[sato@example.com]]></wp:comment_author_email>
+			<wp:comment_author_IP><![CDATA[203.0.113.5]]></wp:comment_author_IP>
+			<wp:comment_date><![CDATA[2024-05-02 10:00:00]]></wp:comment_date>
+			<wp:comment_date_gmt><![CDATA[2024-05-02 01:00:00]]></wp:comment_date_gmt>
+			<wp:comment_content><![CDATA[参考になりました！<br />ありがとうございます &amp; 感謝]]></wp:comment_content>
+			<wp:comment_approved><![CDATA[1]]></wp:comment_approved>
+			<wp:comment_type><![CDATA[comment]]></wp:comment_type>
+			<wp:comment_parent>0</wp:comment_parent>
+		</wp:comment>
+		<wp:comment>
+			<wp:comment_id>2</wp:comment_id>
+			<wp:comment_author><![CDATA[spam]]></wp:comment_author>
+			<wp:comment_date_gmt><![CDATA[2024-05-03 01:00:00]]></wp:comment_date_gmt>
+			<wp:comment_content><![CDATA[未承認のスパム]]></wp:comment_content>
+			<wp:comment_approved><![CDATA[0]]></wp:comment_approved>
+			<wp:comment_type><![CDATA[comment]]></wp:comment_type>
+		</wp:comment>
+		<wp:comment>
+			<wp:comment_id>3</wp:comment_id>
+			<wp:comment_author><![CDATA[other blog]]></wp:comment_author>
+			<wp:comment_date_gmt><![CDATA[2024-05-04 01:00:00]]></wp:comment_date_gmt>
+			<wp:comment_content><![CDATA[ピンバック]]></wp:comment_content>
+			<wp:comment_approved><![CDATA[1]]></wp:comment_approved>
+			<wp:comment_type><![CDATA[pingback]]></wp:comment_type>
+		</wp:comment>
+	</item>
+
+	<item>
+		<title>Second post</title>
+		<link>https://old-blog.example.com/2024/06/second-post/</link>
+		<dc:creator><![CDATA[demo]]></dc:creator>
+		<content:encoded><![CDATA[<p>前の記事は<a href="/2024/05/dont-panic/">こちら</a>。外部は<a href="https://example.org/">example.org</a>。</p>]]></content:encoded>
+		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+		<wp:post_id>102</wp:post_id>
+		<wp:post_date><![CDATA[2024-06-10 09:00:00]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[2024-06-10 00:00:00]]></wp:post_date_gmt>
+		<wp:post_name><![CDATA[second-post]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="category" nicename="uncategorized"><![CDATA[未分類]]></category>
+	</item>
+
+	<item>
+		<title>下書きの記事</title>
+		<link>https://old-blog.example.com/?p=103</link>
+		<dc:creator><![CDATA[taro]]></dc:creator>
+		<content:encoded><![CDATA[まだ書きかけ。]]></content:encoded>
+		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+		<wp:post_id>103</wp:post_id>
+		<wp:post_date><![CDATA[2024-07-01 09:00:00]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[0000-00-00 00:00:00]]></wp:post_date_gmt>
+		<wp:post_name><![CDATA[]]></wp:post_name>
+		<wp:status><![CDATA[draft]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+	</item>
+
+	<item>
+		<title>Review pending</title>
+		<link>https://old-blog.example.com/?p=104</link>
+		<dc:creator><![CDATA[taro]]></dc:creator>
+		<content:encoded><![CDATA[レビュー待ち]]></content:encoded>
+		<wp:post_id>104</wp:post_id>
+		<wp:post_date_gmt><![CDATA[2024-07-02 00:00:00]]></wp:post_date_gmt>
+		<wp:post_name><![CDATA[review-pending]]></wp:post_name>
+		<wp:status><![CDATA[pending]]></wp:status>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+	</item>
+
+	<item>
+		<title>Future post</title>
+		<link>https://old-blog.example.com/2030/01/future-post/</link>
+		<dc:creator><![CDATA[taro]]></dc:creator>
+		<content:encoded><![CDATA[予約投稿です。]]></content:encoded>
+		<wp:post_id>105</wp:post_id>
+		<wp:post_date_gmt><![CDATA[2030-01-01 00:00:00]]></wp:post_date_gmt>
+		<wp:post_name><![CDATA[future-post]]></wp:post_name>
+		<wp:status><![CDATA[future]]></wp:status>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+	</item>
+
+	<item>
+		<title>Private memo</title>
+		<link>https://old-blog.example.com/private-memo/</link>
+		<dc:creator><![CDATA[taro]]></dc:creator>
+		<content:encoded><![CDATA[非公開]]></content:encoded>
+		<wp:post_id>106</wp:post_id>
+		<wp:post_date_gmt><![CDATA[2024-01-01 00:00:00]]></wp:post_date_gmt>
+		<wp:post_name><![CDATA[private-memo]]></wp:post_name>
+		<wp:status><![CDATA[private]]></wp:status>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+	</item>
+
+	<item>
+		<title>Trashed</title>
+		<link>https://old-blog.example.com/trashed/</link>
+		<content:encoded><![CDATA[ゴミ箱]]></content:encoded>
+		<wp:post_id>107</wp:post_id>
+		<wp:post_name><![CDATA[trashed__trashed]]></wp:post_name>
+		<wp:status><![CDATA[trash]]></wp:status>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+	</item>
+
+	<item>
+		<title>会社概要</title>
+		<link>https://old-blog.example.com/company/</link>
+		<dc:creator><![CDATA[taro]]></dc:creator>
+		<content:encoded><![CDATA[<h2>会社概要</h2>
+<table><tr><td>社名</td><td>サンプル株式会社</td></tr><tr><td>所在地</td><td>東京都</td></tr></table>]]></content:encoded>
+		<wp:post_id>110</wp:post_id>
+		<wp:post_date_gmt><![CDATA[2023-01-01 00:00:00]]></wp:post_date_gmt>
+		<wp:post_name><![CDATA[company]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_type><![CDATA[page]]></wp:post_type>
+	</item>
+
+	<item>
+		<title>Home</title>
+		<link>https://old-blog.example.com/?p=120</link>
+		<wp:post_id>120</wp:post_id>
+		<wp:post_name><![CDATA[home]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_type><![CDATA[nav_menu_item]]></wp:post_type>
+	</item>
+
+	<item>
+		<title>景色</title>
+		<link>https://old-blog.example.com/?attachment_id=900</link>
+		<wp:post_id>900</wp:post_id>
+		<wp:post_name><![CDATA[scenery]]></wp:post_name>
+		<wp:status><![CDATA[inherit]]></wp:status>
+		<wp:post_parent>101</wp:post_parent>
+		<wp:post_type><![CDATA[attachment]]></wp:post_type>
+		<wp:attachment_url><![CDATA[https://www.gstatic.com/webp/gallery/2.jpg]]></wp:attachment_url>
+		<wp:postmeta><wp:meta_key><![CDATA[_wp_attachment_image_alt]]></wp:meta_key><wp:meta_value><![CDATA[山の景色]]></wp:meta_value></wp:postmeta>
+	</item>
+	<item>
+		<title>ロゴ</title>
+		<link>https://old-blog.example.com/?attachment_id=901</link>
+		<wp:post_id>901</wp:post_id>
+		<wp:post_name><![CDATA[logo]]></wp:post_name>
+		<wp:status><![CDATA[inherit]]></wp:status>
+		<wp:post_parent>101</wp:post_parent>
+		<wp:post_type><![CDATA[attachment]]></wp:post_type>
+		<wp:attachment_url><![CDATA[https://s.w.org/style/images/about/WordPress-logotype-wmark.png]]></wp:attachment_url>
+		<wp:postmeta><wp:meta_key><![CDATA[_wp_attachment_image_alt]]></wp:meta_key><wp:meta_value><![CDATA[WordPress のロゴ]]></wp:meta_value></wp:postmeta>
+	</item>
+</channel>
+</rss>

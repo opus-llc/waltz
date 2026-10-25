@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0"
+	xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:wp="http://wordpress.org/export/1.2/"
+>
+<channel>
+	<title>Gutenberg Site</title>
+	<link>https://gb.example.com</link>
+	<wp:wxr_version>1.2</wp:wxr_version>
+	<wp:base_site_url>https://gb.example.com</wp:base_site_url>
+	<wp:base_blog_url>https://gb.example.com</wp:base_blog_url>
+	<wp:author><wp:author_id>1</wp:author_id><wp:author_login><![CDATA[hanako.editor]]></wp:author_login><wp:author_email><![CDATA[hanako@gb.example.com]]></wp:author_email><wp:author_display_name><![CDATA[鈴木 花子]]></wp:author_display_name></wp:author>
+	<wp:category><wp:term_id>2</wp:term_id><wp:category_nicename><![CDATA[guide]]></wp:category_nicename><wp:cat_name><![CDATA[ガイド]]></wp:cat_name></wp:category>
+
+	<item>
+		<title>ブロックエディタの記事</title>
+		<link>https://gb.example.com/guide/block-editor-post/</link>
+		<dc:creator><![CDATA[hanako.editor]]></dc:creator>
+		<content:encoded><![CDATA[<!-- wp:paragraph -->
+<p>ブロックエディタで書いた<em>本文</em>です。<code>inline code</code>もあります。</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2 class="wp-block-heading">見出し2</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">見出し3</h3>
+<!-- /wp:heading -->
+
+<!-- wp:list -->
+<ul><!-- wp:list-item -->
+<li>りんご</li>
+<!-- /wp:list-item -->
+
+<!-- wp:list-item -->
+<li>みかん</li>
+<!-- /wp:list-item --></ul>
+<!-- /wp:list -->
+
+<!-- wp:image {"id":300,"sizeSlug":"large","linkDestination":"media"} -->
+<figure class="wp-block-image size-large"><a href="https://www.gstatic.com/webp/gallery/1.webp"><img src="https://www.gstatic.com/webp/gallery/1.webp" alt="ブロック画像" class="wp-image-300"/></a><figcaption class="wp-element-caption">画像のキャプション</figcaption></figure>
+<!-- /wp:image -->
+
+<!-- wp:table -->
+<figure class="wp-block-table"><table><thead><tr><th>プラン</th><th>料金</th></tr></thead><tbody><tr><td>無料</td><td>0円</td></tr><tr><td>有料</td><td>1,000円</td></tr></tbody></table></figure>
+<!-- /wp:table -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>npm run import:wordpress -- export.xml
+&lt;div&gt;HTML&lt;/div&gt;</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:quote -->
+<blockquote class="wp-block-quote"><!-- wp:paragraph -->
+<p>引用文です。</p>
+<!-- /wp:paragraph --></blockquote>
+<!-- /wp:quote -->
+
+<!-- wp:columns -->
+<div class="wp-block-columns"><!-- wp:column -->
+<div class="wp-block-column"><!-- wp:paragraph -->
+<p>左の段</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column -->
+
+<!-- wp:column -->
+<div class="wp-block-column"><!-- wp:paragraph -->
+<p>右の段</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns -->
+
+<!-- wp:embed {"url":"https://www.youtube.com/watch?v=dQw4w9WgXcQ","type":"video","providerNameSlug":"youtube"} -->
+<figure class="wp-block-embed is-type-video is-provider-youtube wp-block-embed-youtube"><div class="wp-block-embed__wrapper">
+https://www.youtube.com/watch?v=dQw4w9WgXcQ
+</div></figure>
+<!-- /wp:embed -->
+
+<!-- wp:kadence/rowlayout {"uniqueID":"abc"} -->
+<div class="kb-row-layout-wrap"><p>Kadence の行レイアウト</p></div>
+<!-- /wp:kadence/rowlayout -->
+
+<!-- wp:more -->
+<!--more-->
+<!-- /wp:more -->
+
+<!-- wp:paragraph -->
+<p>~~取り消し~~ではなく<del>取り消し線</del>。</p>
+<!-- /wp:paragraph -->]]></content:encoded>
+		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+		<wp:post_id>201</wp:post_id>
+		<wp:post_date_gmt><![CDATA[2025-02-01 00:00:00]]></wp:post_date_gmt>
+		<wp:post_name><![CDATA[block-editor-post]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+		<category domain="category" nicename="guide"><![CDATA[ガイド]]></category>
+		<wp:postmeta><wp:meta_key><![CDATA[_yoast_wpseo_title]]></wp:meta_key><wp:meta_value><![CDATA[ブロックエディタからの移行ガイド]]></wp:meta_value></wp:postmeta>
+		<wp:postmeta><wp:meta_key><![CDATA[_yoast_wpseo_metadesc]]></wp:meta_key><wp:meta_value><![CDATA[Gutenberg で書いた記事を移す方法]]></wp:meta_value></wp:postmeta>
+	</item>
+
+	<item>
+		<title>Elementor で作ったLP</title>
+		<link>https://gb.example.com/lp/</link>
+		<dc:creator><![CDATA[hanako.editor]]></dc:creator>
+		<content:encoded><![CDATA[<div data-elementor-type="wp-page" class="elementor elementor-5"><section class="elementor-section"><div class="elementor-container"><h2 class="elementor-heading-title">今すぐ始めよう</h2><div class="elementor-text-editor"><p>Elementor のフォールバック本文</p></div></div></section></div>]]></content:encoded>
+		<wp:post_id>202</wp:post_id>
+		<wp:post_date_gmt><![CDATA[2025-01-01 00:00:00]]></wp:post_date_gmt>
+		<wp:post_name><![CDATA[lp]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_type><![CDATA[page]]></wp:post_type>
+		<wp:postmeta><wp:meta_key><![CDATA[_elementor_edit_mode]]></wp:meta_key><wp:meta_value><![CDATA[builder]]></wp:meta_value></wp:postmeta>
+		<wp:postmeta><wp:meta_key><![CDATA[_elementor_data]]></wp:meta_key><wp:meta_value><![CDATA[[{"id":"abc","elType":"section"}]]]></wp:meta_value></wp:postmeta>
+	</item>
+
+	<item>
+		<title>Divi のページ</title>
+		<link>https://gb.example.com/divi-page/</link>
+		<dc:creator><![CDATA[hanako.editor]]></dc:creator>
+		<content:encoded><![CDATA[[et_pb_section fb_built="1"][et_pb_row][et_pb_column type="4_4"][et_pb_text]<p>Divi のテキスト</p>[/et_pb_text][/et_pb_column][/et_pb_row][/et_pb_section]]]></content:encoded>
+		<wp:post_id>203</wp:post_id>
+		<wp:post_date_gmt><![CDATA[2025-01-02 00:00:00]]></wp:post_date_gmt>
+		<wp:post_name><![CDATA[divi-page]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_type><![CDATA[page]]></wp:post_type>
+		<wp:postmeta><wp:meta_key><![CDATA[_et_pb_use_builder]]></wp:meta_key><wp:meta_value><![CDATA[on]]></wp:meta_value></wp:postmeta>
+	</item>
+
+	<item>
+		<title>商品A</title>
+		<link>https://gb.example.com/product/a/</link>
+		<wp:post_id>204</wp:post_id>
+		<wp:post_name><![CDATA[a]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_type><![CDATA[product]]></wp:post_type>
+	</item>
+	<item>
+		<title>再利用ブロック</title>
+		<wp:post_id>205</wp:post_id>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_type><![CDATA[wp_block]]></wp:post_type>
+	</item>
+</channel>
+</rss>

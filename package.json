@@ -11,17 +11,23 @@
     "db:generate": "drizzle-kit generate",
     "seed": "tsx scripts/seed.ts",
     "setup": "tsx scripts/seed.ts",
-    "build:seed": "esbuild scripts/seed.ts --bundle --platform=node --format=cjs --external:better-sqlite3 --outfile=dist/seed.cjs --log-level=warning"
+    "build:seed": "esbuild scripts/seed.ts --bundle --platform=node --format=cjs --external:better-sqlite3 --outfile=dist/seed.cjs --log-level=warning",
+    "import:wordpress": "tsx scripts/import-wordpress.ts",
+    "build:import": "esbuild scripts/import-wordpress.ts --bundle --platform=node --format=cjs --external:better-sqlite3 --outfile=dist/import-wordpress.cjs --log-level=warning",
+    "test:wp-import": "tsx scripts/test-wp-import.ts"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3",
     "drizzle-orm": "^0.45.4",
+    "fast-xml-parser": "^5.11.2",
     "marked": "^18.1.1",
     "next": "16.4.2",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "sanitize-html": "^2.18.1",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "turndown": "^7.2.4",
+    "turndown-plugin-gfm": "^1.0.2"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
@@ -30,6 +36,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/sanitize-html": "^2.16.2",
+    "@types/turndown": "^5.0.6",
     "drizzle-kit": "^0.31.11",
     "eslint": "^9",
     "eslint-config-next": "16.4.2",

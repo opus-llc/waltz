@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
   output: "standalone",
   basePath,
   poweredByHeader: false,
+  // 末尾スラッシュの除去は src/proxy.ts で行う（旧 WordPress の URL を 1 回の 301 で転送するため）
+  skipTrailingSlashRedirect: true,
   serverExternalPackages: ["better-sqlite3"],
   experimental: {
     serverActions: { bodySizeLimit: "6mb", ...(allowedOrigins.length ? { allowedOrigins } : {}) },

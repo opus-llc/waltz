@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0"
+	xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:wp="http://wordpress.org/export/1.2/"
+>
+<channel>
+	<title>Photo Blog</title>
+	<link>https://photo.example.net</link>
+	<wp:wxr_version>1.2</wp:wxr_version>
+	<wp:base_site_url>https://photo.example.net</wp:base_site_url>
+	<wp:base_blog_url>https://photo.example.net</wp:base_blog_url>
+	<wp:author><wp:author_login><![CDATA[photographer]]></wp:author_login><wp:author_email><![CDATA[]]></wp:author_email><wp:author_display_name><![CDATA[写真家]]></wp:author_display_name></wp:author>
+
+	<item>
+		<title>写真がたくさんの記事</title>
+		<link>https://photo.example.net/many-photos/</link>
+		<dc:creator><![CDATA[photographer]]></dc:creator>
+		<content:encoded><![CDATA[<!-- wp:paragraph --><p>取得に成功するはずの画像（webp / jpg / png / gif）:</p><!-- /wp:paragraph -->
+<!-- wp:image --><figure class="wp-block-image"><img src="https://www.gstatic.com/webp/gallery/1.webp" alt="webp"/></figure><!-- /wp:image -->
+<!-- wp:image --><figure class="wp-block-image"><img src="https://www.gstatic.com/webp/gallery/2.jpg" alt="jpg" srcset="https://www.gstatic.com/webp/gallery/2.jpg 550w"/></figure><!-- /wp:image -->
+<!-- wp:image --><figure class="wp-block-image"><img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" alt="png"/></figure><!-- /wp:image -->
+<!-- wp:image --><figure class="wp-block-image"><img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif" alt="gif (括弧入りURL)"/></figure><!-- /wp:image -->
+<!-- wp:paragraph --><p>同じ画像の2回目（1回だけ取得されるはず）:</p><!-- /wp:paragraph -->
+<p><img src="https://www.gstatic.com/webp/gallery/1.webp" alt="webp again"></p>
+<!-- wp:paragraph --><p>失敗するはずの画像:</p><!-- /wp:paragraph -->
+<p><img src="http://127.0.0.1/secret.png" alt="loopback"></p>
+<p><img src="http://localhost:3000/uploads/x.png" alt="localhost"></p>
+<p><img src="http://169.254.169.254/latest/meta-data/" alt="metadata"></p>
+<p><img src="http://10.0.0.5/internal.jpg" alt="private"></p>
+<p><img src="http://[::1]/v6.png" alt="ipv6 loopback"></p>
+<p><img src="http://metadata.google.internal/computeMetadata/v1/" alt="gcp metadata"></p>
+<p><img src="ftp://ftp.example.com/a.jpg" alt="ftp"></p>
+<p><img src="https://example.com/not-an-image.jpg" alt="html instead of image"></p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.jpg" alt="too big 14MB"></p>
+<p><img src="/wp-content/uploads/2024/01/relative.jpg" alt="relative path"></p>
+<p><img src="data:image/png;base64,iVBORw0KGgo=" alt="data uri"></p>]]></content:encoded>
+		<wp:post_id>301</wp:post_id>
+		<wp:post_date_gmt><![CDATA[2025-03-01 00:00:00]]></wp:post_date_gmt>
+		<wp:post_name><![CDATA[many-photos]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+		<wp:postmeta><wp:meta_key><![CDATA[_thumbnail_id]]></wp:meta_key><wp:meta_value><![CDATA[350]]></wp:meta_value></wp:postmeta>
+	</item>
+
+	<item>
+		<title>アイキャッチの取得に失敗する記事</title>
+		<link>https://photo.example.net/broken-cover/</link>
+		<dc:creator><![CDATA[photographer]]></dc:creator>
+		<content:encoded><![CDATA[<p>アイキャッチは内部アドレスなので取得されない。</p>]]></content:encoded>
+		<wp:post_id>302</wp:post_id>
+		<wp:post_date_gmt><![CDATA[2025-03-02 00:00:00]]></wp:post_date_gmt>
+		<wp:post_name><![CDATA[broken-cover]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_type><![CDATA[post]]></wp:post_type>
+		<wp:postmeta><wp:meta_key><![CDATA[_thumbnail_id]]></wp:meta_key><wp:meta_value><![CDATA[351]]></wp:meta_value></wp:postmeta>
+	</item>
+
+	<item>
+		<title>cover</title>
+		<wp:post_id>350</wp:post_id>
+		<wp:status><![CDATA[inherit]]></wp:status>
+		<wp:post_type><![CDATA[attachment]]></wp:post_type>
+		<wp:attachment_url><![CDATA[https://upload.wikimedia.org/wikipedia/commons/1/1e/Stonehenge.jpg]]></wp:attachment_url>
+		<wp:postmeta><wp:meta_key><![CDATA[_wp_attachment_image_alt]]></wp:meta_key><wp:meta_value><![CDATA[ストーンヘンジ]]></wp:meta_value></wp:postmeta>
+	</item>
+	<item>
+		<title>broken cover</title>
+		<wp:post_id>351</wp:post_id>
+		<wp:status><![CDATA[inherit]]></wp:status>
+		<wp:post_type><![CDATA[attachment]]></wp:post_type>
+		<wp:attachment_url><![CDATA[http://192.168.1.10/cover.jpg]]></wp:attachment_url>
+	</item>
+</channel>
+</rss>
