@@ -81,6 +81,9 @@ async function main() {
     assert.equal(a.featured, true);
     assert.match(a.coverUrl, /^\/uploads\/[a-z0-9]+-[a-f0-9]{12}\.png$/);
     assert.match(a.body, /\[次の記事\]\(\/articles\/second-post\)/);
+    // パーマリンクの形が違う（/blog/〇〇/）下書き記事へのリンクも、スラッグで照合して書き換える
+    const second = db.select().from(s.articles).where(eq(s.articles.slug, "second-post")).get()!;
+    assert.match(second.body, /\[こちら\]\(\/articles\/review-pending\)/);
     assert.doesNotMatch(a.body, /alert\("xss"\)/);
     assert.match(a.body, /\[埋め込み: www\.youtube\.com\]/);
     assert.doesNotMatch(a.body, /gstatic\.com/);

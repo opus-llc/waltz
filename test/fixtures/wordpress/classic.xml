@@ -106,7 +106,7 @@
 		<title>Second post</title>
 		<link>https://old-blog.example.com/2024/06/second-post/</link>
 		<dc:creator><![CDATA[demo]]></dc:creator>
-		<content:encoded><![CDATA[<p>前の記事は<a href="/2024/05/dont-panic/">こちら</a>。外部は<a href="https://example.org/">example.org</a>。</p>]]></content:encoded>
+		<content:encoded><![CDATA[<p>前の記事は<a href="/2024/05/dont-panic/">こちら</a>。外部は<a href="https://example.org/">example.org</a>。パーマリンクの形が違う下書きへのリンクは<a href="https://old-blog.example.com/blog/review-pending/">こちら</a>。</p>]]></content:encoded>
 		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
 		<wp:post_id>102</wp:post_id>
 		<wp:post_date><![CDATA[2024-06-10 09:00:00]]></wp:post_date>

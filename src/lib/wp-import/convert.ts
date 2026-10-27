@@ -11,6 +11,8 @@ export type ConvertContext = {
   attachments: Map<number, { url: string; alt: string }>;
   /** 旧 URL（正規化済み）→ 新しいパス。本文中の内部リンクの書き換え用 */
   linkMap: Map<string, string>;
+  /** 元のスラッグ（デコード・小文字化済み）→ 新しいパス。パーマリンクの形が違うリンク（/blog/〇〇/ や下書きの記事）の照合用 */
+  slugMap: Map<string, string>;
   /** 旧 URL の正規化（legacy-path.ts の normalizeLegacyPath） */
   normalize: (pathname: string, search: string) => string | null;
 };
@@ -125,6 +127,18 @@ function absolute(raw: string, base: string): string | null {
 /** Markdown のリンク先に安全に入るよう、空白と括弧をエンコード */
 const mdUrl = (u: string) => u.replace(/ /g, "%20").replace(/\(/g, "%28").replace(/\)/g, "%29");
 
+/** URL の最後の部分が取り込む記事のスラッグと一致すれば、その記事のパス（カテゴリ・タグ・画像などの URL は対象外） */
+function bySlug(pathname: string, slugMap: Map<string, string>): string | undefined {
+  let p = pathname;
+  try {
+    p = decodeURIComponent(p);
+  } catch {}
+  p = p.normalize("NFC").toLowerCase();
+  if (/^\/(wp-content|wp-admin|category|tag|author|feed|page)\//.test(p)) return undefined;
+  const last = p.split("/").filter(Boolean).pop();
+  return last ? slugMap.get(last) : undefined;
+}
+
 function makeTurndown(ctx: ConvertContext, images: Set<string>): TurndownService {
   const td = new TurndownService({ headingStyle: "atx", codeBlockStyle: "fenced", bulletListMarker: "-", emDelimiter: "*", hr: "---" });
   td.use(gfm);
@@ -155,7 +169,7 @@ function makeTurndown(ctx: ConvertContext, images: Set<string>): TurndownService
         const u = new URL(abs);
         out = abs;
         if (siteHost && u.host === siteHost) {
-          const mapped = ctx.linkMap.get(ctx.normalize(u.pathname, u.search) ?? "");
+          const mapped = ctx.linkMap.get(ctx.normalize(u.pathname, u.search) ?? "") ?? bySlug(u.pathname, ctx.slugMap);
           if (mapped) out = mapped + u.hash;
         }
       }

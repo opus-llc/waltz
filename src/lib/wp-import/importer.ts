@@ -263,7 +263,12 @@ export function prepareImport(db: DB, wxr: WxrData, input: ImportOptions): Prepa
   const authorCount = new Map<string, number>();
   const issueMap = new Map<string, { kind: Issue["kind"]; label: string; articles: string[] }>();
   const allImages = new Set<string>();
-  const ctx = { siteUrl: wxr.siteUrl, attachments, linkMap, normalize: normalizeLegacyPath };
+  const slugMap = new Map<string, string>();
+  for (const p of planned) {
+    const key = p.originalSlug.normalize("NFC").toLowerCase();
+    if (p.action !== "skip" && key && !slugMap.has(key)) slugMap.set(key, p.newPath);
+  }
+  const ctx = { siteUrl: wxr.siteUrl, attachments, linkMap, slugMap, normalize: normalizeLegacyPath };
 
   for (const p of planned) {
     const { item } = p;
