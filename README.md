@@ -162,6 +162,7 @@ waltz は WordPress の REST API（`/wp-json/wp/v2/posts`）と、opus connector
 | `NEXT_PUBLIC_BASE_PATH` | サブディレクトリに置くときの接頭辞（ビルド時） |
 | `NEXT_PUBLIC_ARTICLE_PATH` | 記事の URL の置き場（ビルド時）。既定は `articles`（`/articles/{slug}`）。空文字にすると `/{slug}`（WordPress の「投稿名」と同じ形。`/articles/{slug}` は 301 で転送） |
 | `SERVER_ACTIONS_ALLOWED_ORIGINS` | 中継サーバーのドメイン（カンマ区切り・ビルド時） |
+| `RSC_PARAM_CHECK` | `off` で画面遷移のデータ取得（`?_rsc=`）の検査を切る（ビルド時）。前段の中継が `_rsc` を落とす（Next.js 14 の rewrites など）とリンクが転送のループで効かなくなるため。前段に CDN が無いときだけ切る |
 | `DEMO_PASSWORD` | サンプルデータのパスワード |
 | `DEMO_MODE` | `1` で公開デモ用の動きにする（毎朝4時にサンプルデータへ初期化・計測タグ無効・検索エンジン除外・ログイン画面にデモ用アカウントを表示） |
 
