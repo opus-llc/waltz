@@ -160,11 +160,12 @@ waltz は WordPress の REST API（`/wp-json/wp/v2/posts`）と、opus connector
 | `ADMIN_EMAIL` | このメールで登録した人を管理者にする（本番では必須） |
 | `DATA_DIR` | データ保存先（既定 `./data`） |
 | `NEXT_PUBLIC_BASE_PATH` | サブディレクトリに置くときの接頭辞（ビルド時） |
+| `NEXT_PUBLIC_ARTICLE_PATH` | 記事の URL の置き場（ビルド時）。既定は `articles`（`/articles/{slug}`）。空文字にすると `/{slug}`（WordPress の「投稿名」と同じ形。`/articles/{slug}` は 301 で転送） |
 | `SERVER_ACTIONS_ALLOWED_ORIGINS` | 中継サーバーのドメイン（カンマ区切り・ビルド時） |
 | `DEMO_PASSWORD` | サンプルデータのパスワード |
 | `DEMO_MODE` | `1` で公開デモ用の動きにする（毎朝4時にサンプルデータへ初期化・計測タグ無効・検索エンジン除外・ログイン画面にデモ用アカウントを表示） |
 
-サイト名・テーマカラー・計測IDなどは管理画面の「サイト設定」から変えられます。
+サイト名・テーマカラー・計測ID（GA4・Google タグマネージャー・PostHog）・ヘッダーのボタン・記事の CTA、会員コミュニティを使うかどうかは、管理画面の「サイト設定」から変えられます。コミュニティを使わない設定にすると記事メディアとして動き（コミュニティ・会員登録の画面と導線を隠す）、登録できるのは `ADMIN_EMAIL` の管理者だけになります。
 
 ## 構成
 

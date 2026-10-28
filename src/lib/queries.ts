@@ -116,6 +116,19 @@ export function getPublishedArticle(slug: string, type: "post" | "page" = "post"
   return row ?? null;
 }
 
+/** 指定したスラッグの公開記事を、指定した順に（無い・未公開のものは飛ばす） */
+export function publishedBySlugs(slugs: string[]): ArticleCard[] {
+  if (!slugs.length) return [];
+  const rows = db
+    .select(articleCols)
+    .from(articles)
+    .leftJoin(categories, eq(categories.id, articles.categoryId))
+    .leftJoin(users, eq(users.id, articles.authorId))
+    .where(and(publishedPost(), inArray(articles.slug, slugs)))
+    .all();
+  return slugs.map((sl) => rows.find((r) => r.slug === sl)).filter((r): r is ArticleCard => !!r);
+}
+
 export function getArticleTags(articleId: number) {
   return db
     .select({ id: tags.id, slug: tags.slug, name: tags.name })

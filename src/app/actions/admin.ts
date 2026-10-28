@@ -5,11 +5,14 @@ import { redirect } from "next/navigation";
 import { and, eq, ne } from "drizzle-orm";
 import { db, schema } from "@/db";
 import { requireAdmin, requireEditor } from "@/lib/auth";
-import { saveSettings, type Settings } from "@/lib/settings";
+import { DEFAULT_SETTINGS, saveSettings, type Settings } from "@/lib/settings";
 import { isDemo } from "@/lib/demo";
 import { isValidSlug, parseJstLocal, slugify } from "@/lib/format";
 import { plainExcerpt } from "@/lib/markdown";
 import { setArticleTags, splitTagInput } from "@/lib/article-tags";
+import { CtaError, validateCtaJson } from "@/lib/cta";
+import { isReservedSlug } from "@/lib/paths";
+import { parseRelatedLinks, parseRelatedSlugs } from "@/lib/related";
 import type { FormState } from "./auth";
 
 const { articles, categories, communities, communityMembers, users, posts } = schema;
@@ -32,10 +35,23 @@ export async function saveArticle(_: FormState, form: FormData): Promise<FormSta
   const intent = String(form.get("intent") ?? "save");
   const publishedAtInput = String(form.get("publishedAt") ?? "");
   const tagInput = String(form.get("tags") ?? "");
+  const ctaKey = String(form.get("ctaKey") ?? "").trim().toLowerCase();
+  const relatedSlugs = parseRelatedSlugs(JSON.stringify(String(form.get("relatedSlugs") ?? "").split(/\s+/).map((v) => v.trim().toLowerCase()).filter(Boolean)));
+  const relatedLinks = parseRelatedLinks(
+    JSON.stringify(
+      String(form.get("relatedLinks") ?? "")
+        .split("\n")
+        .map((line) => line.trim().match(/^(\S+)\s*(.*)$/))
+        .filter((m): m is RegExpMatchArray => !!m)
+        .map((m) => ({ url: m[1], title: m[2] })),
+    ),
+  );
 
   if (!title) return { error: "タイトルを入力してください" };
   if (!slug) slug = slugify(title);
   if (!isValidSlug(slug)) return { error: "URL（スラッグ）は半角英小文字・数字・ハイフンで入力してください" };
+  if (type === "post" && isReservedSlug(slug)) return { error: `「${slug}」はサイトのページと重なるため、記事のURLに使えません` };
+  if (ctaKey && !/^[a-z0-9_-]{1,30}$/.test(ctaKey)) return { error: "CTA の種類は英小文字・数字・_- で入力してください" };
   if (coverUrl && !/^(https?:\/\/|\/uploads\/)[^\s"'<>]+$/.test(coverUrl)) return { error: "アイキャッチ画像のURLが正しくありません" };
   const dup = db
     .select({ id: articles.id })
@@ -65,6 +81,9 @@ export async function saveArticle(_: FormState, form: FormData): Promise<FormSta
     featured: type === "post" ? featured : false,
     seoTitle,
     seoDescription,
+    ctaKey: type === "post" ? ctaKey : "",
+    relatedSlugs: JSON.stringify(type === "post" ? relatedSlugs.filter((sl) => sl !== slug) : []),
+    relatedLinks: JSON.stringify(type === "post" ? relatedLinks : []),
     status: status as "draft" | "published",
     publishedAt,
     updatedAt: new Date(),
@@ -179,16 +198,34 @@ export async function updateSettings(_: FormState, form: FormData): Promise<Form
     externalTagUrl: v("externalTagUrl"),
     showPartnerLinks: form.get("showPartnerLinks") === "on" ? "1" : "0",
     footerNote: v("footerNote"),
+    gtmId: v("gtmId").toUpperCase(),
+    communityEnabled: form.get("communityEnabled") === "on" ? "1" : "0",
+    headerCtaLabel: v("headerCtaLabel").slice(0, 30),
+    headerCtaUrl: v("headerCtaUrl"),
+    posthogKey: v("posthogKey"),
+    posthogHost: v("posthogHost").replace(/\/+$/, "") || DEFAULT_SETTINGS.posthogHost,
   };
+  try {
+    next.ctaBlocks = JSON.stringify(validateCtaJson(String(form.get("ctaBlocks") ?? "")));
+  } catch (e) {
+    if (e instanceof CtaError) return { error: e.message };
+    throw e;
+  }
   if (!next.siteName) return { error: "サイト名を入力してください" };
   if (!/^#[0-9a-fA-F]{6}$/.test(next.accentColor!)) return { error: "テーマカラーは #RRGGBB 形式で入力してください" };
   if (!/^https?:\/\/[^\s]+$/.test(next.siteUrl!)) return { error: "サイトURLは http(s):// から入力してください" };
   if (next.ga4Id && !/^G-[A-Z0-9]{4,20}$/.test(next.ga4Id)) return { error: "GA4 測定IDは G- から始まる形式で入力してください" };
+  if (next.posthogKey && !/^phc_[A-Za-z0-9]{20,80}$/.test(next.posthogKey)) return { error: "PostHog のプロジェクトキーは phc_ から始まる値です" };
+  if (!/^(https:\/\/[^\s"'<>/]+|\/[a-z0-9_-]+)$/i.test(next.posthogHost!)) return { error: "PostHog の送信先は https://ドメイン か /ingest のようなパスにしてください" };
+  if (next.gtmId && !/^GTM-[A-Z0-9]{4,12}$/.test(next.gtmId)) return { error: "タグマネージャーのコンテナIDは GTM- から始まる形式で入力してください" };
+  if (next.headerCtaUrl && !/^(https?:\/\/[^\s"'<>]+|\/[^\s"'<>]*)$/.test(next.headerCtaUrl)) return { error: "ヘッダーのボタンのリンク先は https:// か / から入力してください" };
   if (next.externalTagUrl && !/^https:\/\/[^\s"'<>]+$/.test(next.externalTagUrl))
     return { error: "外部タグのURLは https:// から始まるURLにしてください" };
   if (isDemo()) {
     // デモ環境では計測タグとURLを変えさせない（誰でも管理者でログインできるため）
     delete next.ga4Id;
+    delete next.gtmId;
+    delete next.posthogKey;
     delete next.externalTagUrl;
     delete next.siteUrl;
   }

@@ -180,6 +180,64 @@ async function main() {
     assert.equal(w.getPublishedPost(db, page.id), null);
   });
 
+  await test("投稿口で CTA の種類・関連記事・関連リンク・狙う検索語・更新日時を受け渡せる", () => {
+    const a = w.createPost(
+      db,
+      {
+        title: "関連つき",
+        content: "本文",
+        content_format: "markdown",
+        status: "publish",
+        target_keyword: "AI 記事 作成",
+        cta_variant: "hr",
+        related_post_slugs: ["html-post", "html-post", "no-such"],
+        related_links: [{ url: "https://opus-inc.jp/blog/x", title: "opus の記事" }],
+        date: "2026-08-01T09:00:00",
+        modified: "2026-09-01T09:00:00",
+      },
+      { authorId: null, siteUrl: SITE },
+    );
+    const v = w.connectorView(a);
+    assert.equal(v.focus_keyword, "AI 記事 作成");
+    assert.equal(v.cta_variant, "hr");
+    assert.deepEqual(v.related_post_slugs, ["html-post", "no-such"]);
+    assert.deepEqual(v.related_links, [{ url: "https://opus-inc.jp/blog/x", title: "opus の記事" }]);
+    assert.equal(a.updatedAt.toISOString(), "2026-09-01T00:00:00.000Z");
+    assert.equal(w.serializePost(a, SITE).modified, "2026-09-01T09:00:00");
+    // 関連だけを足す（本文は触らない）。自分自身は入らない
+    const u = w.updatePost(db, a.id, { related_post_slugs: ["html-post", a.slug], expected_hash: v.content_hash }, { siteUrl: SITE });
+    assert.deepEqual(w.connectorView(u).related_post_slugs, ["html-post"]);
+    assert.equal(u.body, "本文");
+    const bad = (body: Record<string, unknown>) => () => w.createPost(db, { title: "x", content: "x", ...body }, { authorId: null, siteUrl: SITE });
+    assert.throws(bad({ related_post_slugs: ["日本語"] }), apiError(400, "opus_bad_request"));
+    assert.throws(bad({ related_links: [{ url: "javascript:alert(1)" }] }), apiError(400, "opus_bad_request"));
+    assert.throws(bad({ cta_variant: "Main CTA" }), apiError(400, "opus_bad_request"));
+  });
+
+  await test("CTA の設定は形を検査し、壊れた保存値は「出さない」に倒す", async () => {
+    const c = await import("../src/lib/cta");
+    const blocks = c.validateCtaJson(JSON.stringify([
+      { key: "main", title: "末尾の見出し", inlineTitle: "中ほどの見出し", button: "無料ではじめる", url: "/signup", subButton: "料金", subUrl: "/pricing" },
+      { key: "hr", title: "採用", button: "見る", url: "/lp/hr?utm_content=article-cta-{placement}&s={slug}" },
+    ]));
+    assert.equal(c.pickCta(blocks, "hr")?.key, "hr");
+    assert.equal(c.pickCta(blocks, "unknown")?.key, "main");
+    assert.equal(c.pickCta([], "main"), null);
+    assert.equal(c.fillUrl(blocks[1].url, "a-b", "inline"), "/lp/hr?utm_content=article-cta-inline&s=a-b");
+    assert.throws(() => c.validateCtaJson("[{"), c.CtaError);
+    assert.throws(() => c.validateCtaJson(JSON.stringify([{ key: "main", title: "x", button: "x", url: "javascript:alert(1)" }])), c.CtaError);
+    assert.throws(() => c.validateCtaJson(JSON.stringify([{ key: "a", title: "x", button: "x", url: "/" }, { key: "a", title: "y", button: "y", url: "/" }])), c.CtaError);
+    assert.deepEqual(c.parseCtaBlocks("not json"), []);
+    assert.deepEqual(c.splitForInlineCta("<p>a</p><h2>1</h2><p>b</p><h2>2</h2><p>c</p>"), ["<p>a</p><h2>1</h2><p>b</p>", "<h2>2</h2><p>c</p>"]);
+    assert.equal(c.splitForInlineCta("<h2>1</h2><p>b</p>"), null);
+  });
+
+  await test("記事の URL は既定で /articles/{slug}", async () => {
+    const p = await import("../src/lib/paths");
+    assert.equal(p.articlePath("abc"), "/articles/abc");
+    assert.equal(p.isReservedSlug("community"), false); // /articles の下に置くときは重ならない
+  });
+
   console.log(`\n${passed} passed`);
 }
 

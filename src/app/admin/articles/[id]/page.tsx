@@ -7,6 +7,8 @@ import { getArticleTags } from "@/lib/queries";
 import { deleteArticle } from "@/app/actions/admin";
 import { ArticleEditor } from "@/components/admin/ArticleEditor";
 import { PartnerCard } from "@/components/admin/PartnerCard";
+import { articlePath } from "@/lib/paths";
+import { parseRelatedLinks, parseRelatedSlugs } from "@/lib/related";
 
 export default async function EditArticle({ params, searchParams }: PageProps<"/admin/articles/[id]">) {
   await requireEditor();
@@ -48,10 +50,13 @@ export default async function EditArticle({ params, searchParams }: PageProps<"/
           status: a.status,
           publishedAt: toJstLocal(a.publishedAt),
           tags: getArticleTags(a.id).map((t) => t.name).join(", "),
+          ctaKey: a.ctaKey,
+          relatedSlugs: parseRelatedSlugs(a.relatedSlugs).join("\n"),
+          relatedLinks: parseRelatedLinks(a.relatedLinks).map((l) => `${l.url} ${l.title}`.trim()).join("\n"),
         }}
         categories={categories}
         partner={<PartnerCard kind="content" />}
-        publicUrl={live ? `/${a.type === "page" ? "p" : "articles"}/${a.slug}` : null}
+        publicUrl={live ? (a.type === "page" ? `/p/${a.slug}` : articlePath(a.slug)) : null}
       />
     </div>
   );

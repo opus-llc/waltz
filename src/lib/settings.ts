@@ -13,6 +13,18 @@ export const DEFAULT_SETTINGS = {
   /** concerto のメディアのサイトID（計測タグの data-site の UUID）。入れると concerto の計測タグを全ページに入れる */
   concertoSiteId: "",
   concertoOrigin: "https://concerto.sonata-ai.app",
+  /** "0" で会員コミュニティを閉じ、記事メディアとして動かす（会員登録は ADMIN_EMAIL だけ） */
+  communityEnabled: "1",
+  /** ヘッダー右上のボタン（本体サービスへの申込など）。URL が空なら出さない */
+  headerCtaLabel: "",
+  headerCtaUrl: "",
+  /** Google タグマネージャーのコンテナID（GTM-XXXXXXX） */
+  gtmId: "",
+  /** 記事の中と末尾に出す CTA。JSON の [{ key, title, body, button, url }]。src/lib/cta.ts */
+  ctaBlocks: "[]",
+  /** PostHog（プロジェクトキーは公開してよい値）。送信先は本体サイトで中継しているなら /ingest など */
+  posthogKey: "",
+  posthogHost: "https://us.i.posthog.com",
   showPartnerLinks: "1",
   footerNote: "",
 };
@@ -30,6 +42,8 @@ export const getSettings = cache((): Settings => {
   s.siteUrl = s.siteUrl.replace(/\/$/, "");
   return s;
 });
+
+export const communityOn = (s: Settings) => s.communityEnabled !== "0";
 
 export function saveSettings(values: Partial<Settings>) {
   for (const [key, value] of Object.entries(values)) {

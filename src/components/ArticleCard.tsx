@@ -2,11 +2,12 @@ import Link from "next/link";
 import type { ArticleCard as Card } from "@/lib/queries";
 import { formatDate } from "@/lib/format";
 import { ArticleCover } from "./ArticleCover";
+import { articlePath } from "@/lib/paths";
 
 export function ArticleCard({ a, variant = "grid" }: { a: Card; variant?: "grid" | "row" }) {
   if (variant === "row") {
     return (
-      <Link href={`/articles/${a.slug}`} className="group flex gap-4 py-5">
+      <Link href={articlePath(a.slug)} className="group flex gap-4 py-5">
         <div className="w-32 shrink-0 overflow-hidden rounded-lg sm:w-44">
           <ArticleCover title={a.title} coverUrl={a.coverUrl} coverAlt={a.coverAlt} size="sm" />
         </div>
@@ -20,7 +21,7 @@ export function ArticleCard({ a, variant = "grid" }: { a: Card; variant?: "grid"
     );
   }
   return (
-    <Link href={`/articles/${a.slug}`} className="group block">
+    <Link href={articlePath(a.slug)} className="group block">
       <div className="overflow-hidden rounded-xl">
         <ArticleCover title={a.title} coverUrl={a.coverUrl} coverAlt={a.coverAlt} label={a.categoryName} className="transition-transform duration-300 group-hover:scale-[1.02]" />
       </div>

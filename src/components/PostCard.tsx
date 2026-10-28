@@ -7,6 +7,7 @@ import { Avatar } from "./Avatar";
 import { ArticleCover } from "./ArticleCover";
 import { LikeButton } from "./LikeButton";
 import { PostBody } from "./PostBody";
+import { articlePath } from "@/lib/paths";
 
 export function PostCard({ post, viewer, linkToDetail = true }: { post: FeedItem; viewer: SafeUser | null; linkToDetail?: boolean }) {
   const canDelete = viewer && (viewer.id === post.author.id || viewer.role === "admin");
@@ -42,7 +43,7 @@ export function PostCard({ post, viewer, linkToDetail = true }: { post: FeedItem
         </div>
 
         {post.article && (
-          <Link href={`/articles/${post.article.slug}`} className="mt-3 flex overflow-hidden rounded-xl border border-line hover:bg-soft">
+          <Link href={articlePath(post.article.slug)} className="mt-3 flex overflow-hidden rounded-xl border border-line hover:bg-soft">
             <div className="w-28 shrink-0 sm:w-36">
               <ArticleCover title={post.article.title} coverUrl={post.article.coverUrl} size="sm" className="h-full" />
             </div>

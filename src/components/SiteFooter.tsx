@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { getSettings } from "@/lib/settings";
-import { categoriesWithCounts } from "@/lib/queries";
+import { communityOn, getSettings } from "@/lib/settings";
+import { categoriesWithCounts, getPublishedArticle } from "@/lib/queries";
 import { withBase } from "@/lib/base-path";
 
 export function SiteFooter() {
   const s = getSettings();
   const cats = categoriesWithCounts();
+  // 固定ページは作られているものだけ出す（無いページへのリンクを置かない）
+  const hasPage = (slug: string) => !!getPublishedArticle(slug, "page");
   return (
     <footer className="mt-24 border-t border-line bg-soft">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:grid-cols-[2fr_1fr_1fr]">
@@ -24,9 +26,9 @@ export function SiteFooter() {
         <div>
           <p className="text-xs font-bold tracking-wider text-muted">サイトについて</p>
           <ul className="mt-3 space-y-2 text-sm">
-            <li><Link href="/p/about" className="hover:underline">このサイトについて</Link></li>
-            <li><Link href="/community" className="hover:underline">コミュニティ</Link></li>
-            <li><Link href="/p/privacy" className="hover:underline">プライバシーポリシー</Link></li>
+            {hasPage("about") && <li><Link href="/p/about" className="hover:underline">このサイトについて</Link></li>}
+            {communityOn(s) && <li><Link href="/community" className="hover:underline">コミュニティ</Link></li>}
+            {hasPage("privacy") && <li><Link href="/p/privacy" className="hover:underline">プライバシーポリシー</Link></li>}
             <li><a href={withBase("/feed.xml")} className="hover:underline">RSS</a></li>
           </ul>
         </div>

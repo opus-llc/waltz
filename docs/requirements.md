@@ -85,6 +85,7 @@
 | X-03 | 記事の取り込み・書き出し API。WordPress REST API（wp/v2）と opus connector（opus/v1）と同じ形で、concerto の取り込み・改善の反映と、sonata からの新規作成を受ける（README「外部ツールとつなぐ」） | ✅ |
 | X-05 | 接続トークン（管理者が接続先ごとに発行・失効。DB にはハッシュだけ） | ✅ |
 | X-06 | concerto の計測タグ（貼り付け用コードからサイトIDを読み取り、全ページに出す） | ✅ |
+| X-07 | 記事メディアとして使う設定（会員コミュニティを閉じる）、ヘッダーのボタン、記事の CTA（中ほどと末尾・記事ごとに種類を選ぶ）、手で選ぶ関連記事と関連リンク、狙う検索語、Google タグマネージャー・PostHog、記事 URL の置き場（`NEXT_PUBLIC_ARTICLE_PATH`） | ✅ |
 | X-04 | Webhook（会員登録・イベント申込を CRM/MA へ渡す） | 次期 |
 
 ### 3-6. WordPress からの移行

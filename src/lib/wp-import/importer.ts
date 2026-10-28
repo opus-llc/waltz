@@ -12,6 +12,7 @@ import { newUploadFilename } from "../image-sniff";
 import { convertContent, htmlToPlain, type Issue } from "./convert";
 import { fetchImage, type FetchedImage } from "./fetch-image";
 import type { WxrData, WxrItem } from "./parse";
+import { articlePath } from "../paths";
 
 export type ImportOptions = {
   /** 同じスラッグの記事が既にあるとき。rename: 末尾に -2 などを付けて取り込む / skip: 取り込まない（既存記事は上書きしない） */
@@ -205,7 +206,7 @@ export function prepareImport(db: DB, wxr: WxrData, input: ImportOptions): Prepa
       }
     }
     if (action !== "skip") used.add(slug);
-    const newPath = type === "page" ? `/p/${slug}` : `/articles/${slug}`;
+    const newPath = type === "page" ? `/p/${slug}` : articlePath(slug);
     return { item, type, st, originalSlug, slug, action, newPath, future: !!st.future || (st.status === "published" && !!item.date && item.date > now) };
   });
 

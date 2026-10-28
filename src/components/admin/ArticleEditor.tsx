@@ -21,6 +21,11 @@ type Initial = {
   status: "draft" | "published";
   publishedAt: string;
   tags: string;
+  ctaKey: string;
+  /** 1行に1つのスラッグ */
+  relatedSlugs: string;
+  /** 1行に「URL タイトル」 */
+  relatedLinks: string;
 };
 
 async function upload(file: File): Promise<string> {
@@ -189,6 +194,23 @@ export function ArticleEditor({
               <label className="label" htmlFor="seoDescription">メタディスクリプション</label>
               <textarea id="seoDescription" name="seoDescription" defaultValue={initial.seoDescription} rows={2} className="field" />
             </div>
+            {initial.type === "post" && (
+              <>
+                <div>
+                  <label className="label" htmlFor="relatedSlugs">あわせて読みたい記事（スラッグを1行に1つ）</label>
+                  <textarea id="relatedSlugs" name="relatedSlugs" defaultValue={initial.relatedSlugs} rows={3} className="field font-mono text-sm" />
+                  <p className="hint">空欄なら、同じカテゴリの新しい記事を出します</p>
+                </div>
+                <div>
+                  <label className="label" htmlFor="relatedLinks">関連リンク（1行に「URL タイトル」）</label>
+                  <textarea id="relatedLinks" name="relatedLinks" defaultValue={initial.relatedLinks} rows={2} className="field font-mono text-sm" />
+                </div>
+                <div>
+                  <label className="label" htmlFor="ctaKey">CTA の種類</label>
+                  <input id="ctaKey" name="ctaKey" defaultValue={initial.ctaKey} placeholder="空欄ならサイト設定の1つ目" className="field font-mono" />
+                </div>
+              </>
+            )}
           </div>
         </details>
       </div>

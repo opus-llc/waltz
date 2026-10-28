@@ -10,6 +10,9 @@ import { renderMarkdown, plainExcerpt } from "../markdown";
 import { isValidSlug, slugify } from "../format";
 import { BASE_PATH } from "../base-path";
 import { setArticleTags } from "../article-tags";
+import { isReservedSlug } from "../paths";
+import { parseRelatedLinks, parseRelatedSlugs, type RelatedLink } from "../related";
+import { articlePath } from "../paths";
 
 /**
  * WordPress の REST API（wp/v2）と opus connector プラグイン（opus/v1）の口を、waltz の記事で再現する。
@@ -73,7 +76,7 @@ export function wpStatus(a: Pick<Article, "status" | "publishedAt">): "publish" 
   return a.publishedAt && a.publishedAt.getTime() > Date.now() ? "future" : "publish";
 }
 
-export const articleUrl = (siteUrl: string, slug: string) => `${siteUrl}/articles/${slug}`;
+export const articleUrl = (siteUrl: string, slug: string) => `${siteUrl}${articlePath(slug)}`;
 
 export function serializePost(a: Article, siteUrl: string) {
   const published = a.publishedAt ?? a.createdAt;
@@ -163,11 +166,19 @@ export function getPostForEdit(db: DB, id: number): Article | null {
 export function connectorView(a: Article) {
   return {
     id: a.id,
+    slug: a.slug,
     title: a.title,
+    excerpt: a.excerpt,
     content: a.body,
     content_hash: contentHash(a.body),
     status: wpStatus(a),
+    date_gmt: a.publishedAt ? isoNoZone(a.publishedAt).replace("T", " ") : null,
     modified_gmt: isoNoZone(a.updatedAt).replace("T", " "),
+    // waltz で足した項目（opus connector プラグインには無い）
+    focus_keyword: a.focusKeyword,
+    cta_variant: a.ctaKey,
+    related_post_slugs: parseRelatedSlugs(a.relatedSlugs),
+    related_links: parseRelatedLinks(a.relatedLinks),
   };
 }
 
@@ -233,6 +244,11 @@ type Fields = {
   coverAlt?: string;
   seoTitle?: string;
   seoDescription?: string;
+  focusKeyword?: string;
+  ctaKey?: string;
+  relatedSlugs?: string[];
+  relatedLinks?: RelatedLink[];
+  modified?: Date;
 };
 
 const str = (v: unknown, name: string, max: number): string | undefined => {
@@ -269,6 +285,29 @@ export function parseFields(body: unknown): Fields {
     throw new ApiError(400, "opus_bad_request", "featured_image_url は http(s):// から始まる URL にしてください");
   const slug = str(b.slug, "slug", 80)?.trim().toLowerCase();
   if (slug && !isValidSlug(slug)) throw new ApiError(400, "opus_bad_request", "slug は半角英小文字・数字・ハイフンで指定してください");
+  if (slug && isReservedSlug(slug)) throw new ApiError(400, "opus_bad_request", `slug「${slug}」はサイトのページと重なるため使えません`);
+  const ctaKey = str(b.cta_variant, "cta_variant", 30)?.trim().toLowerCase();
+  if (ctaKey && !/^[a-z0-9_-]{1,30}$/.test(ctaKey)) throw new ApiError(400, "opus_bad_request", "cta_variant は英小文字・数字・_- で指定してください");
+  let relatedSlugs: string[] | undefined;
+  if (b.related_post_slugs !== undefined && b.related_post_slugs !== null) {
+    if (!Array.isArray(b.related_post_slugs) || b.related_post_slugs.length > 10 || b.related_post_slugs.some((x) => typeof x !== "string" || !isValidSlug(x)))
+      throw new ApiError(400, "opus_bad_request", "related_post_slugs はスラッグの配列（10件まで）で指定してください");
+    relatedSlugs = parseRelatedSlugs(JSON.stringify(b.related_post_slugs));
+  }
+  let relatedLinks: RelatedLink[] | undefined;
+  if (b.related_links !== undefined && b.related_links !== null) {
+    const ok = Array.isArray(b.related_links) && b.related_links.length <= 10 &&
+      b.related_links.every((x) => x && typeof x === "object" && typeof x.url === "string" && /^https?:\/\/[^\s"'<>]+$/.test(x.url) && (x.title === undefined || typeof x.title === "string"));
+    if (!ok) throw new ApiError(400, "opus_bad_request", "related_links は { url, title } の配列（10件まで・url は http(s)）で指定してください");
+    relatedLinks = parseRelatedLinks(JSON.stringify(b.related_links));
+  }
+  // 移行用: 元のサイトの更新日時を残す（無ければ保存した時刻）
+  let modified: Date | undefined;
+  if (b.modified !== undefined && b.modified !== null) {
+    const raw = String(b.modified);
+    modified = new Date(/[zZ]|[+-]\d\d:?\d\d$/.test(raw) ? raw : `${raw}+09:00`);
+    if (Number.isNaN(modified.getTime())) throw new ApiError(400, "opus_bad_request", "modified の形式が正しくありません");
+  }
   return {
     title: str(b.title, "title", 200)?.trim(),
     content: str(b.content, "content", MAX_CONTENT_CHARS),
@@ -283,6 +322,11 @@ export function parseFields(body: unknown): Fields {
     coverAlt: str(b.featured_image_alt, "featured_image_alt", 300)?.trim(),
     seoTitle: str(b.seo_title, "seo_title", 200)?.trim(),
     seoDescription: str(b.seo_description, "seo_description", 500)?.trim(),
+    focusKeyword: str(b.focus_keyword ?? b.target_keyword, "focus_keyword", 200)?.trim(),
+    ctaKey,
+    relatedSlugs,
+    relatedLinks,
+    modified,
   };
 }
 
@@ -304,6 +348,7 @@ function findCategoryId(db: DB, key: string | undefined): number | null | undefi
 function uniqueSlug(db: DB, base: string, exceptId?: number): string {
   for (let n = 1; ; n++) {
     const candidate = n === 1 ? base : `${base.slice(0, 76)}-${n}`;
+    if (isReservedSlug(candidate)) continue;
     const hit = db.select({ id: articles.id }).from(articles).where(eq(articles.slug, candidate)).get();
     if (!hit || hit.id === exceptId) return candidate;
   }
@@ -345,8 +390,12 @@ export function createPost(db: DB, body: unknown, opts: { authorId: number | nul
         publishedAt,
         seoTitle: f.seoTitle ?? "",
         seoDescription: f.seoDescription ?? "",
+        focusKeyword: f.focusKeyword ?? "",
+        ctaKey: f.ctaKey ?? "",
+        relatedSlugs: JSON.stringify(f.relatedSlugs ?? []),
+        relatedLinks: JSON.stringify(f.relatedLinks ?? []),
         createdAt: now,
-        updatedAt: now,
+        updatedAt: f.modified ?? now,
       })
       .returning()
       .get();
@@ -383,9 +432,13 @@ export function updatePost(db: DB, id: number, body: unknown, opts: { siteUrl: s
         ...(f.category !== undefined ? { categoryId: findCategoryId(tx, f.category) ?? null } : {}),
         ...(f.seoTitle !== undefined ? { seoTitle: f.seoTitle } : {}),
         ...(f.seoDescription !== undefined ? { seoDescription: f.seoDescription } : {}),
+        ...(f.focusKeyword !== undefined ? { focusKeyword: f.focusKeyword } : {}),
+        ...(f.ctaKey !== undefined ? { ctaKey: f.ctaKey } : {}),
+        ...(f.relatedSlugs !== undefined ? { relatedSlugs: JSON.stringify(f.relatedSlugs.filter((sl) => sl !== current.slug)) } : {}),
+        ...(f.relatedLinks !== undefined ? { relatedLinks: JSON.stringify(f.relatedLinks) } : {}),
         status,
         publishedAt,
-        updatedAt: new Date(),
+        updatedAt: f.modified ?? new Date(),
       })
       .where(eq(articles.id, current.id))
       .run();

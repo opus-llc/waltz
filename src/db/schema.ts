@@ -65,6 +65,14 @@ export const articles = sqliteTable(
     featured: integer("featured", { mode: "boolean" }).notNull().default(false),
     seoTitle: text("seo_title").notNull().default(""),
     seoDescription: text("seo_description").notNull().default(""),
+    /** この記事で狙う検索語（表示には使わない。記事作成・SEO の点検ツールが読み書きする） */
+    focusKeyword: text("focus_keyword").notNull().default(""),
+    /** 記事の中と末尾に出す CTA（サイト設定の ctaBlocks の key）。空なら1つ目 */
+    ctaKey: text("cta_key").notNull().default(""),
+    /** 手で選んだ関連記事のスラッグ（JSON の配列）。空ならカテゴリが同じ記事を出す */
+    relatedSlugs: text("related_slugs").notNull().default("[]"),
+    /** 関連リンク（外部の記事。JSON の [{ url, title }]） */
+    relatedLinks: text("related_links").notNull().default("[]"),
     publishedAt: integer("published_at", { mode: "timestamp" }),
     createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(now),
     updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().default(now),

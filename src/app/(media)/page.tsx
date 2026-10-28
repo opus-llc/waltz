@@ -1,14 +1,16 @@
 import Link from "next/link";
-import { getSettings } from "@/lib/settings";
+import { communityOn, getSettings } from "@/lib/settings";
 import { featuredArticles, listArticles, listCommunities, feed, communityEvents, categoriesWithCounts } from "@/lib/queries";
 import { ArticleCard } from "@/components/ArticleCard";
 import { ArticleCover } from "@/components/ArticleCover";
 import { Avatar } from "@/components/Avatar";
 import { PostBody } from "@/components/PostBody";
 import { formatDate, formatDateTime, timeAgo } from "@/lib/format";
+import { articlePath } from "@/lib/paths";
 
 export default function Home() {
   const s = getSettings();
+  const community = communityOn(s);
   const featured = featuredArticles(3);
   const hero = featured[0] ?? listArticles({ limit: 1 }).items[0];
   const { items: latest } = listArticles({ limit: 6 });
@@ -27,11 +29,11 @@ export default function Home() {
           <p className="mt-5 max-w-lg leading-relaxed text-muted">{s.description}</p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link href="/articles" className="btn btn-primary">記事を読む</Link>
-            <Link href="/community" className="btn btn-ghost">コミュニティをのぞく</Link>
+            {community && <Link href="/community" className="btn btn-ghost">コミュニティをのぞく</Link>}
           </div>
         </div>
         {hero && (
-          <Link href={`/articles/${hero.slug}`} className="group block">
+          <Link href={articlePath(hero.slug)} className="group block">
             <div className="overflow-hidden rounded-2xl shadow-[0_20px_50px_-20px_rgba(0,0,0,0.35)]">
               <ArticleCover title={hero.title} coverUrl={hero.coverUrl} coverAlt={hero.coverAlt} label={hero.categoryName} size="lg" />
             </div>
@@ -61,6 +63,7 @@ export default function Home() {
       </section>
 
       {/* 記事 → コミュニティ */}
+      {community && (
       <section className="mt-20 bg-soft py-16">
         <div className="mx-auto max-w-6xl px-4">
           <div className="max-w-2xl">
@@ -125,6 +128,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      )}
 
       {/* カテゴリ */}
       <section className="mx-auto mt-16 max-w-6xl px-4">

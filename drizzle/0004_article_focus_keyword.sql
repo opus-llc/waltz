@@ -1,0 +1,1 @@
+ALTER TABLE `articles` ADD `focus_keyword` text DEFAULT '' NOT NULL;

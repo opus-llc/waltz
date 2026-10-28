@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/lib/auth";
 import { isDemo } from "@/lib/demo";
 import { getSettings } from "@/lib/settings";
+import { parseCtaBlocks } from "@/lib/cta";
 import { updateSettings } from "@/app/actions/admin";
 import { ActionForm } from "@/components/admin/ActionForm";
 import { PartnerCard } from "@/components/admin/PartnerCard";
@@ -8,6 +9,8 @@ import { PartnerCard } from "@/components/admin/PartnerCard";
 export default async function AdminSettings() {
   await requireAdmin();
   const s = getSettings();
+  const ctas = parseCtaBlocks(s.ctaBlocks);
+  const ctaJson = ctas.length ? JSON.stringify(ctas.map((c) => Object.fromEntries(Object.entries(c).filter(([, v]) => v))), null, 2) : "";
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <h1 className="text-2xl font-bold">サイト設定</h1>
@@ -32,6 +35,36 @@ export default async function AdminSettings() {
             <input id="externalTagUrl" name="externalTagUrl" defaultValue={s.externalTagUrl} placeholder="https://example.com/tag.js" className="field font-mono" />
             <p className="hint">script の読み込みURLだけを登録できます。任意のHTMLは貼れません（管理画面が乗っ取られたときの被害を抑えるため）</p>
           </div>
+          <div>
+            <label className="label" htmlFor="gtmId">Google タグマネージャーのコンテナID</label>
+            <input id="gtmId" name="gtmId" defaultValue={s.gtmId} placeholder="GTM-XXXXXXX" className="field font-mono" />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div><label className="label" htmlFor="posthogKey">PostHog のプロジェクトキー</label><input id="posthogKey" name="posthogKey" defaultValue={s.posthogKey} placeholder="phc_…" className="field font-mono" /></div>
+            <div><label className="label" htmlFor="posthogHost">PostHog の送信先</label><input id="posthogHost" name="posthogHost" defaultValue={s.posthogHost} className="field font-mono" /><p className="hint">本体サイトで中継している場合は /ingest など</p></div>
+          </div>
+        </section>
+        <section className="space-y-4 rounded-2xl border border-line bg-white p-5">
+          <h2 className="font-bold">サイトの使い方</h2>
+          <label className="flex min-h-[44px] items-center gap-2 text-sm">
+            <input type="checkbox" name="communityEnabled" defaultChecked={s.communityEnabled !== "0"} className="h-5 w-5" />
+            会員コミュニティを使う
+          </label>
+          <p className="hint">外すと記事メディアとして動きます（コミュニティ・会員登録の画面と導線を隠し、登録できるのは ADMIN_EMAIL の管理者だけ）。</p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div><label className="label" htmlFor="headerCtaLabel">ヘッダーのボタンの文言</label><input id="headerCtaLabel" name="headerCtaLabel" defaultValue={s.headerCtaLabel} placeholder="無料で試す" className="field" /></div>
+            <div><label className="label" htmlFor="headerCtaUrl">ヘッダーのボタンのリンク先</label><input id="headerCtaUrl" name="headerCtaUrl" defaultValue={s.headerCtaUrl} placeholder="https://" className="field font-mono" /></div>
+          </div>
+        </section>
+        <section className="space-y-3 rounded-2xl border border-line bg-white p-5">
+          <h2 className="font-bold">記事の CTA</h2>
+          <p className="hint">
+            記事の中ほど（2つ目の大見出しの前）と末尾に出す申込などの枠です。記事ごとに key で選び、選ばなければ1つ目が出ます。
+            項目: key・eyebrow・title・body・inlineTitle・inlineBody（中ほど用。無ければ title・body）・button・url・subButton・subUrl・note・endText（末尾だけ。{"{link}"} の位置に endLinkLabel / endLinkUrl のリンク）。url の {"{slug}"} と {"{placement}"} は記事のスラッグと inline / end に置き換わります。
+          </p>
+          <label className="label" htmlFor="ctaBlocks">CTA（JSON）</label>
+          <textarea id="ctaBlocks" name="ctaBlocks" defaultValue={ctaJson} rows={12} className="field font-mono text-xs" spellCheck={false} />
+          {ctas.length > 0 && <p className="hint">登録中: {ctas.map((c) => c.key).join("・")}</p>}
         </section>
         <section className="space-y-3 rounded-2xl border border-line bg-white p-5">
           <h2 className="font-bold">パートナー導線</h2>

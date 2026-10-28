@@ -6,6 +6,7 @@ import { hit, clear } from "@/lib/rate-limit";
 import { eq, count } from "drizzle-orm";
 import { db, schema } from "@/db";
 import { createSession, destroySession, hashPassword, verifyPassword, safeNext } from "@/lib/auth";
+import { communityOn, getSettings } from "@/lib/settings";
 
 export type FormState = { error?: string; ok?: string } | undefined;
 
@@ -38,6 +39,8 @@ export async function signup(_: FormState, form: FormData): Promise<FormState> {
   const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
   const noUsers = (db.select({ n: count() }).from(schema.users).get()?.n ?? 0) === 0;
   const isFirst = adminEmail ? email === adminEmail : noUsers && process.env.NODE_ENV !== "production";
+  // コミュニティを閉じたサイト（記事メディアとして使う）では、管理者以外の登録を受け付けない
+  if (!isFirst && !communityOn(getSettings())) return { error: "このサイトでは会員登録を受け付けていません" };
   const user = db
     .insert(schema.users)
     .values({
@@ -71,7 +74,9 @@ export async function login(_: FormState, form: FormData): Promise<FormState> {
   }
   clear(`login-acct:${email}`);
   await createSession(user.id);
-  redirect(safeNext(form.get("next")));
+  // コミュニティを閉じたサイトでは、編集者以上は管理画面へ、それ以外はトップへ
+  const home = communityOn(getSettings()) ? "/community" : user.role === "member" ? "/" : "/admin";
+  redirect(safeNext(form.get("next"), home));
 }
 
 export async function logout() {

@@ -1,5 +1,6 @@
 import { allPublished } from "@/lib/queries";
 import { getSettings } from "@/lib/settings";
+import { articlePath } from "@/lib/paths";
 
 export const dynamic = "force-dynamic";
 
@@ -20,8 +21,8 @@ ${items
   .map(
     (p) => `<item>
 <title>${esc(p.title)}</title>
-<link>${esc(`${s.siteUrl}/articles/${p.slug}`)}</link>
-<guid>${esc(`${s.siteUrl}/articles/${p.slug}`)}</guid>
+<link>${esc(`${s.siteUrl}${articlePath(p.slug)}`)}</link>
+<guid>${esc(`${s.siteUrl}${articlePath(p.slug)}`)}</guid>
 <pubDate>${p.publishedAt?.toUTCString() ?? ""}</pubDate>
 <description>${esc(p.excerpt)}</description>
 </item>`,

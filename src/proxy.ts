@@ -1,5 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { findRedirect } from "@/lib/redirect-lookup";
+import { ARTICLE_ROOT, RESERVED_SEGMENTS } from "@/lib/paths";
+
+const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+/** 記事の置き場が /articles 以外のとき、公開 URL → 中身のページ（/articles/{slug}）の対応 */
+function articleRewrite(pathname: string): string | null {
+  if (ARTICLE_ROOT === "/articles") return null;
+  const rest = ARTICLE_ROOT ? (pathname.startsWith(`${ARTICLE_ROOT}/`) ? pathname.slice(ARTICLE_ROOT.length + 1) : null) : pathname.slice(1);
+  if (!rest || !SLUG.test(rest) || (!ARTICLE_ROOT && RESERVED_SEGMENTS.has(rest))) return null;
+  return `/articles/${rest}`;
+}
 
 /**
  * 旧サイト（WordPress など）の URL を、転送表（redirects）にもとづいて 301 で新しい URL へ送る。
@@ -13,6 +24,17 @@ export function proxy(request: NextRequest) {
   if (request.method === "GET" || request.method === "HEAD") {
     const to = findRedirect(pathname, searchParams);
     if (to) return redirect(request, `${basePath}${to}`, "", 301);
+  }
+  if (ARTICLE_ROOT !== "/articles" && (request.method === "GET" || request.method === "HEAD")) {
+    // 中身のページの URL で来たら、公開 URL へ 301（同じ記事が2つの URL に出ないように）
+    const m = pathname.match(/^\/articles\/([a-z0-9]+(?:-[a-z0-9]+)*)$/);
+    if (m) return redirect(request, `${basePath}${ARTICLE_ROOT}/${m[1]}`, search, 301);
+    const internal = articleRewrite(pathname);
+    if (internal) {
+      const url = new URL(request.nextUrl.href);
+      url.pathname = `${basePath}${internal}`;
+      return NextResponse.rewrite(url);
+    }
   }
   if (pathname.length > 1 && pathname.endsWith("/")) {
     // 先頭の連続スラッシュも1つにする（"//evil.example/" が Location: //evil.example にならないように）

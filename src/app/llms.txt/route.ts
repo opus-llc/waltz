@@ -1,5 +1,6 @@
 import { allPublished, categoriesWithCounts } from "@/lib/queries";
 import { getSettings } from "@/lib/settings";
+import { articlePath } from "@/lib/paths";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ export function GET() {
     "",
     "## 記事",
     "",
-    ...posts.map((p) => `- [${p.title}](${s.siteUrl}/articles/${p.slug})${p.excerpt ? `: ${oneLine(p.excerpt)}` : ""}`),
+    ...posts.map((p) => `- [${p.title}](${s.siteUrl}${articlePath(p.slug)})${p.excerpt ? `: ${oneLine(p.excerpt)}` : ""}`),
     "",
     "## カテゴリ",
     "",

@@ -5,6 +5,7 @@ import { listCommunities, newMembers, featuredArticles } from "@/lib/queries";
 import { JoinButton } from "@/components/JoinButton";
 import { Avatar } from "@/components/Avatar";
 import { ArticleCover } from "@/components/ArticleCover";
+import { articlePath } from "@/lib/paths";
 
 export const metadata: Metadata = { title: "探す" };
 
@@ -59,7 +60,7 @@ export default async function Explore({ searchParams }: PageProps<"/community/ex
           <h2 className="text-lg font-bold">注目の記事</h2>
           <div className="mt-3 grid gap-3 sm:grid-cols-3">
             {reads.map((a) => (
-              <Link key={a.id} href={`/articles/${a.slug}`} className="overflow-hidden rounded-2xl border border-line bg-white hover:shadow-sm">
+              <Link key={a.id} href={articlePath(a.slug)} className="overflow-hidden rounded-2xl border border-line bg-white hover:shadow-sm">
                 <ArticleCover title={a.title} coverUrl={a.coverUrl} size="sm" />
                 <p className="line-clamp-2 p-3 text-sm font-bold leading-snug">{a.title}</p>
               </Link>

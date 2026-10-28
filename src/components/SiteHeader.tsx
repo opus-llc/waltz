@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getCurrentUser, canEdit } from "@/lib/auth";
-import { getSettings } from "@/lib/settings";
+import { communityOn, getSettings } from "@/lib/settings";
 import { categoriesWithCounts, unreadCount } from "@/lib/queries";
 import { Avatar } from "./Avatar";
 
@@ -8,7 +8,8 @@ export async function SiteHeader() {
   const s = getSettings();
   const user = await getCurrentUser();
   const cats = categoriesWithCounts().slice(0, 4);
-  const unread = user ? unreadCount(user.id) : 0;
+  const community = communityOn(s);
+  const unread = user && community ? unreadCount(user.id) : 0;
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-white/90 backdrop-blur" style={{ top: "env(safe-area-inset-top, 0px)" }}>
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4">
@@ -23,18 +24,25 @@ export async function SiteHeader() {
           ))}
         </nav>
         <div className="ml-auto flex shrink-0 items-center gap-2">
-          <Link href="/community" className="btn btn-primary btn-sm">
-            コミュニティ{unread > 0 && <span className="rounded-full bg-white/25 px-1.5 text-xs">{unread}</span>}
-          </Link>
+          {s.headerCtaUrl && (
+            <a href={s.headerCtaUrl} className="btn btn-primary btn-sm">{s.headerCtaLabel || "詳しく見る"}</a>
+          )}
+          {community && (
+            <Link href="/community" className="btn btn-primary btn-sm">
+              コミュニティ{unread > 0 && <span className="rounded-full bg-white/25 px-1.5 text-xs">{unread}</span>}
+            </Link>
+          )}
           {user ? (
             <>
               {canEdit(user) && <Link href="/admin" className="btn btn-ghost btn-sm hidden sm:inline-flex">管理画面</Link>}
-              <Link href={`/community/u/${user.handle}`} aria-label="プロフィール">
-                <Avatar name={user.name} color={user.avatarColor} size="sm" />
-              </Link>
+              {community && (
+                <Link href={`/community/u/${user.handle}`} aria-label="プロフィール">
+                  <Avatar name={user.name} color={user.avatarColor} size="sm" />
+                </Link>
+              )}
             </>
           ) : (
-            <Link href="/login" className="btn btn-ghost btn-sm">ログイン</Link>
+            community && <Link href="/login" className="btn btn-ghost btn-sm">ログイン</Link>
           )}
         </div>
       </div>

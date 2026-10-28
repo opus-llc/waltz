@@ -11,7 +11,7 @@ export default async function NewArticle({ searchParams }: PageProps<"/admin/art
     <div className="mx-auto max-w-6xl">
       <h1 className="mb-4 text-xl font-bold">{type === "page" ? "固定ページを作成" : "記事を作成"}</h1>
       <ArticleEditor
-        initial={{ type, title: "", slug: "", body: "", excerpt: "", coverUrl: "", coverAlt: "", categoryId: null, featured: false, seoTitle: "", seoDescription: "", status: "draft", publishedAt: "", tags: "" }}
+        initial={{ type, title: "", slug: "", body: "", excerpt: "", coverUrl: "", coverAlt: "", categoryId: null, featured: false, seoTitle: "", seoDescription: "", status: "draft", publishedAt: "", tags: "", ctaKey: "", relatedSlugs: "", relatedLinks: "" }}
         categories={categories}
         partner={<PartnerCard kind="content" />}
         publicUrl={null}

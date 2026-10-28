@@ -22,6 +22,20 @@
       "when": 1793157187112,
       "tag": "0002_api_tokens",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1793158211227,
+      "tag": "0003_article_cta_related",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1793158556313,
+      "tag": "0004_article_focus_keyword",
+      "breakpoints": true
     }
   ]
 }

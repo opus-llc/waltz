@@ -1,14 +1,17 @@
 import Link from "next/link";
 import { getCurrentUser, canEdit } from "@/lib/auth";
-import { getSettings } from "@/lib/settings";
+import { communityOn, getSettings } from "@/lib/settings";
 import { joinedCommunities, unreadCount, communityEvents, newMembers, featuredArticles } from "@/lib/queries";
 import { formatDateTime } from "@/lib/format";
 import { SideNav, BottomTabs } from "@/components/CommunityNav";
 import { Avatar } from "@/components/Avatar";
 import { logout } from "@/app/actions/auth";
+import { articlePath } from "@/lib/paths";
+import { notFound } from "next/navigation";
 
 export default async function CommunityLayout({ children }: { children: React.ReactNode }) {
   const s = getSettings();
+  if (!communityOn(s)) notFound();
   const user = await getCurrentUser();
   const unread = user ? unreadCount(user.id) : 0;
   const mine = user ? joinedCommunities(user.id) : [];
@@ -125,7 +128,7 @@ export default async function CommunityLayout({ children }: { children: React.Re
                 <h2 className="text-sm font-bold">注目の記事</h2>
                 <ul className="mt-3 space-y-3">
                   {reads.map((a) => (
-                    <li key={a.id}><Link href={`/articles/${a.slug}`} className="line-clamp-2 text-sm font-bold leading-snug hover:underline">{a.title}</Link></li>
+                    <li key={a.id}><Link href={articlePath(a.slug)} className="line-clamp-2 text-sm font-bold leading-snug hover:underline">{a.title}</Link></li>
                   ))}
                 </ul>
               </section>

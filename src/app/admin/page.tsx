@@ -5,6 +5,7 @@ import { getCurrentUser, requireEditor } from "@/lib/auth";
 import { timeAgo, nowMs } from "@/lib/format";
 import { Avatar } from "@/components/Avatar";
 import { PartnerCard } from "@/components/admin/PartnerCard";
+import { articlePath } from "@/lib/paths";
 
 export default async function Dashboard({ searchParams }: PageProps<"/admin">) {
   await requireEditor();
@@ -74,7 +75,7 @@ export default async function Dashboard({ searchParams }: PageProps<"/admin">) {
             {sharedArticles.map((a) => (
               <li key={a.slug} className="flex items-baseline gap-3 text-sm">
                 <span className="accent-text w-6 shrink-0 text-right font-bold tabular-nums">{a.n}</span>
-                <Link href={`/articles/${a.slug}`} className="hover:underline">{a.title}</Link>
+                <Link href={articlePath(a.slug)} className="hover:underline">{a.title}</Link>
               </li>
             ))}
             {sharedArticles.length === 0 && <li className="text-sm text-muted">まだありません</li>}
