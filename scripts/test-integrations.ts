@@ -164,6 +164,35 @@ async function main() {
     assert.throws(() => w.updatePost(db, a.id, { content: revised, expected_hash: before.content_hash }, { siteUrl: SITE }), apiError(409, "opus_conflict"));
   });
 
+  await test("取り決め v2: 本文なしでタイトル・SEO の項目だけ書け、読んだ時点の値が違えば 409", () => {
+    const a = w.createPost(db, { title: "元の題", content: "本文", content_format: "markdown" }, { authorId: null, siteUrl: SITE });
+    const v = w.connectorView(a);
+    assert.equal(v.seo_title, "");
+    assert.equal(v.seo_description, "");
+    // 人が先に説明文を直していた（concerto が読んだ時点の値と違う）→ 書かない
+    assert.throws(
+      () => w.updatePost(db, a.id, { seo_description: "新しい説明", expected_hash: v.content_hash, expected: { seo_description: "古い説明" } }, { siteUrl: SITE }),
+      apiError(409, "opus_conflict"),
+    );
+    assert.equal(w.connectorView(w.getPostForEdit(db, a.id)!).seo_description, "");
+    assert.throws(
+      () => w.updatePost(db, a.id, { title: "x", expected_hash: v.content_hash, expected: { body: "x" } }, { siteUrl: SITE }),
+      apiError(400, "opus_bad_request"),
+    );
+    const u = w.updatePost(
+      db,
+      a.id,
+      { title: "新しい題", seo_title: "検索結果の題", seo_description: "新しい説明", expected_hash: v.content_hash, expected: { title: "元の題", seo_description: "" } },
+      { siteUrl: SITE },
+    );
+    const after = w.connectorView(u);
+    assert.equal(after.title, "新しい題");
+    assert.equal(after.seo_title, "検索結果の題");
+    assert.equal(after.seo_description, "新しい説明");
+    assert.equal(u.body, "本文", "本文は触らない");
+    assert.equal(after.content_hash, v.content_hash);
+  });
+
   await test("sonata の再送: 指紋を添えてタイトル・状態も更新できる", () => {
     const a = w.createPost(db, { title: "再送前", content: "初稿", content_format: "markdown" }, { authorId: null, siteUrl: SITE });
     const u = w.updatePost(db, a.id, { title: "再送後", content: "二稿", content_format: "markdown", status: "publish", expected_hash: w.contentHash("初稿") }, { siteUrl: SITE });

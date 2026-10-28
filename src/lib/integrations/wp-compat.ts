@@ -197,6 +197,9 @@ export function connectorView(a: Article) {
     status: wpStatus(a),
     date_gmt: a.publishedAt ? isoNoZone(a.publishedAt).replace("T", " ") : null,
     modified_gmt: isoNoZone(a.updatedAt).replace("T", " "),
+    // opus connector 取り決め v2（concerto の docs/connector-protocol-v2.md）で読み返す項目
+    seo_title: a.seoTitle,
+    seo_description: a.seoDescription,
     // waltz で足した項目（opus connector プラグインには無い）
     focus_keyword: a.focusKeyword,
     cta_variant: a.ctaKey,
@@ -431,10 +434,44 @@ export function createPost(db: DB, body: unknown, opts: { authorId: number | nul
  * 既存記事の更新。opus connector と同じく expected_hash（今の本文の指紋）が一致するときだけ書く。
  * 読んでから書くまでの間に人が編集していたら 409 で止める（concerto の安全装置）
  */
+/**
+ * 取り決め v2 の `expected`: 書き換える項目ごとに「相手が読んだ時点の値」。今の値と違えば 409。
+ * 人が管理画面で直した値を、古い値を元に作った改善案で上書きしないため。
+ * 本文は expected_hash が守るので、ここで見るのは本文以外の項目だけ
+ */
+const EXPECTABLE = {
+  title: (a: Article) => a.title,
+  excerpt: (a: Article) => a.excerpt,
+  seo_title: (a: Article) => a.seoTitle,
+  seo_description: (a: Article) => a.seoDescription,
+  focus_keyword: (a: Article) => a.focusKeyword,
+  related_post_slugs: (a: Article) => parseRelatedSlugs(a.relatedSlugs),
+} as const;
+
+function readExpected(body: unknown): Partial<Record<keyof typeof EXPECTABLE, unknown>> {
+  const raw = (body as Record<string, unknown>).expected;
+  if (raw === undefined || raw === null) return {};
+  if (typeof raw !== "object" || Array.isArray(raw)) throw new ApiError(400, "opus_bad_request", "expected はオブジェクトで指定してください");
+  const out: Partial<Record<keyof typeof EXPECTABLE, unknown>> = {};
+  for (const [k, v] of Object.entries(raw)) {
+    if (!Object.hasOwn(EXPECTABLE, k)) throw new ApiError(400, "opus_bad_request", `expected.${k} は比べられません`);
+    out[k as keyof typeof EXPECTABLE] = v;
+  }
+  return out;
+}
+
+function assertExpected(current: Article, expected: Partial<Record<keyof typeof EXPECTABLE, unknown>>) {
+  for (const [k, want] of Object.entries(expected)) {
+    const now = EXPECTABLE[k as keyof typeof EXPECTABLE](current);
+    if (JSON.stringify(now) !== JSON.stringify(want)) throw new ApiError(409, "opus_conflict", `${k} changed on waltz side`);
+  }
+}
+
 export function updatePost(db: DB, id: number, body: unknown, opts: { siteUrl: string }) {
   const expected = body && typeof body === "object" ? (body as Record<string, unknown>).expected_hash : undefined;
   if (typeof expected !== "string" || !expected) throw new ApiError(400, "opus_bad_request", "content and expected_hash are required");
   const f = parseFields(body);
+  const expectedFields = readExpected(body);
   const md = toBody(f, opts.siteUrl);
   if (md !== undefined && !md.trim()) throw new ApiError(400, "opus_bad_request", "content が空です");
   return db.transaction((tx) => {
@@ -443,6 +480,7 @@ export function updatePost(db: DB, id: number, body: unknown, opts: { siteUrl: s
     const now = contentHash(current.body);
     if (now.length !== expected.length || !crypto.timingSafeEqual(Buffer.from(now), Buffer.from(expected)))
       throw new ApiError(409, "opus_conflict", "content changed on waltz side");
+    assertExpected(current, expectedFields);
     const { status, publishedAt } = publishState(f, current);
     tx.update(articles)
       .set({
