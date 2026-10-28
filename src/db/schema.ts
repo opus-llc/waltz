@@ -261,6 +261,21 @@ export const redirects = sqliteTable("redirects", {
   createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(now),
 });
 
+/**
+ * 外部ツール（concerto・sonata など）が記事を読み書きするための接続トークン。
+ * 平文は発行した画面で一度だけ見せ、DB には sha256 だけを置く。prefix は一覧で見分けるための先頭8文字
+ */
+export const apiTokens = sqliteTable("api_tokens", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  tokenHash: text("token_hash").notNull().unique(),
+  prefix: text("prefix").notNull(),
+  createdBy: integer("created_by").references(() => users.id, { onDelete: "set null" }),
+  lastUsedAt: integer("last_used_at", { mode: "timestamp" }),
+  revokedAt: integer("revoked_at", { mode: "timestamp" }),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(now),
+});
+
 export type User = typeof users.$inferSelect;
 export type Article = typeof articles.$inferSelect;
 export type Community = typeof communities.$inferSelect;

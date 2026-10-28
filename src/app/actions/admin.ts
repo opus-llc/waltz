@@ -9,9 +9,10 @@ import { saveSettings, type Settings } from "@/lib/settings";
 import { isDemo } from "@/lib/demo";
 import { isValidSlug, parseJstLocal, slugify } from "@/lib/format";
 import { plainExcerpt } from "@/lib/markdown";
+import { setArticleTags, splitTagInput } from "@/lib/article-tags";
 import type { FormState } from "./auth";
 
-const { articles, articleTags, tags, categories, communities, communityMembers, users, posts } = schema;
+const { articles, categories, communities, communityMembers, users, posts } = schema;
 const refresh = () => revalidatePath("/", "layout");
 
 export async function saveArticle(_: FormState, form: FormData): Promise<FormState> {
@@ -77,19 +78,7 @@ export async function saveArticle(_: FormState, form: FormData): Promise<FormSta
     articleId = db.insert(articles).values({ ...values, authorId: user.id }).returning({ id: articles.id }).get().id;
   }
 
-  // タグ（読点・カンマ区切り）
-  db.delete(articleTags).where(eq(articleTags.articleId, articleId)).run();
-  const names = [...new Set(tagInput.split(/[,、，]/).map((t) => t.trim()).filter(Boolean))].slice(0, 10);
-  for (const name of names) {
-    let tag = db.select().from(tags).where(eq(tags.name, name)).get();
-    if (!tag) {
-      let tslug = slugify(name);
-      if (tslug.startsWith("post-")) tslug = `tag-${Buffer.from(name).toString("hex").slice(0, 16)}`;
-      if (db.select().from(tags).where(eq(tags.slug, tslug)).get()) tslug = `${tslug}-${Date.now().toString(36)}`;
-      tag = db.insert(tags).values({ name, slug: tslug }).returning().get();
-    }
-    db.insert(articleTags).values({ articleId, tagId: tag.id }).onConflictDoNothing().run();
-  }
+  setArticleTags(db, articleId, splitTagInput(tagInput));
 
   refresh();
   if (!existing) redirect(`/admin/articles/${articleId}?saved=1`);

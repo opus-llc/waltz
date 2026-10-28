@@ -82,7 +82,9 @@
 |---|---|---|
 | X-01 | 計測タグの差し込み口（GA4 測定ID、外部タグの script URL）。任意の HTML を貼る方式にはしない（管理画面の乗っ取り時に被害が広がるため） | ✅ |
 | X-02 | パートナー導線（記事作成支援・カスタマイズ開発・取材撮影の相談先）。設定で非表示にできる | ✅ |
-| X-03 | 記事の取り込み・書き出し API（外部の記事作成ツールから下書きを直接送る） | 次期 |
+| X-03 | 記事の取り込み・書き出し API。WordPress REST API（wp/v2）と opus connector（opus/v1）と同じ形で、concerto の取り込み・改善の反映と、sonata からの新規作成を受ける（README「外部ツールとつなぐ」） | ✅ |
+| X-05 | 接続トークン（管理者が接続先ごとに発行・失効。DB にはハッシュだけ） | ✅ |
+| X-06 | concerto の計測タグ（貼り付け用コードからサイトIDを読み取り、全ページに出す） | ✅ |
 | X-04 | Webhook（会員登録・イベント申込を CRM/MA へ渡す） | 次期 |
 
 ### 3-6. WordPress からの移行
@@ -134,10 +136,10 @@ WordPress 標準のエクスポート（WXR。管理画面「ツール → エ�
 | 区分 | パス |
 |---|---|
 | メディア | `/` `/articles` `/articles/[slug]` `/categories/[slug]` `/tags/[slug]` `/p/[slug]` |
-| 機械向け | `/sitemap.xml` `/robots.txt` `/feed.xml` `/llms.txt` |
+| 機械向け | `/sitemap.xml` `/robots.txt` `/feed.xml` `/llms.txt` `/wp-json/…` |
 | コミュニティ | `/community` `/community/explore` `/community/c/[slug]` `/community/posts/[id]` `/community/u/[handle]` `/community/notifications` `/community/settings` |
 | 認証 | `/login` `/signup` |
-| 管理 | `/admin` `/admin/articles` `/admin/articles/new` `/admin/articles/[id]` `/admin/categories` `/admin/communities` `/admin/members` `/admin/moderation` `/admin/settings` `/admin/import` |
+| 管理 | `/admin` `/admin/articles` `/admin/articles/new` `/admin/articles/[id]` `/admin/categories` `/admin/communities` `/admin/members` `/admin/moderation` `/admin/settings` `/admin/integrations` `/admin/import` |
 
 ## 7. 受け入れ条件（MVP）
 

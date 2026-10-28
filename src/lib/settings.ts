@@ -10,6 +10,9 @@ export const DEFAULT_SETTINGS = {
   siteUrl: "http://localhost:3000",
   ga4Id: "",
   externalTagUrl: "",
+  /** concerto のメディアのサイトID（計測タグの data-site の UUID）。入れると concerto の計測タグを全ページに入れる */
+  concertoSiteId: "",
+  concertoOrigin: "https://concerto.sonata-ai.app",
   showPartnerLinks: "1",
   footerNote: "",
 };

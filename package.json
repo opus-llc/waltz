@@ -14,7 +14,8 @@
     "build:seed": "esbuild scripts/seed.ts --bundle --platform=node --format=cjs --external:better-sqlite3 --outfile=dist/seed.cjs --log-level=warning",
     "import:wordpress": "tsx scripts/import-wordpress.ts",
     "build:import": "esbuild scripts/import-wordpress.ts --bundle --platform=node --format=cjs --external:better-sqlite3 --outfile=dist/import-wordpress.cjs --log-level=warning",
-    "test:wp-import": "tsx scripts/test-wp-import.ts"
+    "test:wp-import": "tsx scripts/test-wp-import.ts",
+    "test:integrations": "tsx scripts/test-integrations.ts"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3",

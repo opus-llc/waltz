@@ -11,6 +11,7 @@ const ITEMS = [
   { href: "/admin/members", label: "メンバー", admin: true },
   { href: "/admin/moderation", label: "モデレーション", admin: true },
   { href: "/admin/settings", label: "サイト設定", admin: true },
+  { href: "/admin/integrations", label: "外部連携", admin: true },
   { href: "/admin/import", label: "WordPress から移行", admin: true },
 ];
 

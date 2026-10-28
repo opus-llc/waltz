@@ -1,5 +1,6 @@
 import TurndownService from "turndown";
 import { gfm } from "turndown-plugin-gfm";
+import { keepCjkEmphasis } from "../turndown-cjk";
 
 /** 自動で移せず、人の確認が要る箇所 */
 export type Issue = { kind: "shortcode" | "builder" | "iframe" | "script" | "form" | "media" | "block"; label: string };
@@ -143,6 +144,7 @@ function makeTurndown(ctx: ConvertContext, images: Set<string>): TurndownService
   const td = new TurndownService({ headingStyle: "atx", codeBlockStyle: "fenced", bulletListMarker: "-", emDelimiter: "*", hr: "---" });
   td.use(gfm);
   td.remove(["script", "style", "noscript", "form", "input", "select", "textarea", "button", "object", "embed"]);
+  keepCjkEmphasis(td);
   let siteHost = "";
   try {
     siteHost = new URL(ctx.siteUrl).host;

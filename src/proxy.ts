@@ -30,6 +30,7 @@ function redirect(request: NextRequest, path: string, search: string, status: 30
 }
 
 export const config = {
-  // API は対象外（proxy を通る本文は 10MB で切られるため。取り込みの XML は最大 50MB）
-  matcher: ["/((?!_next/|api/).*)"],
+  // API は対象外（proxy を通る本文は 10MB で切られるため。取り込みの XML は最大 50MB）。
+  // wp-json（concerto・sonata 向けの口）も、旧サイトの転送や末尾スラッシュの 308 を挟まない
+  matcher: ["/((?!_next/|api/|wp-json).*)"],
 };

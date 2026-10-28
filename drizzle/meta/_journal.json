@@ -15,6 +15,13 @@
       "when": 1792907926487,
       "tag": "0001_redirects",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1793157187112,
+      "tag": "0002_api_tokens",
+      "breakpoints": true
     }
   ]
 }

@@ -135,6 +135,23 @@ docker exec <コンテナ名> node import-wordpress.cjs /data/export.xml --run
 
 取り込むファイルは信用できない入力として扱います。XML の DOCTYPE・外部実体は受け付けません。画像は http/https だけを取得し、サーバー内部のアドレス（localhost・プライベート IP・クラウドのメタデータ）へは接続しません（名前解決後の IP で判定）。リダイレクトは3回、1枚5MB、15秒までです。取り込んだ本文は、表示時に通常の記事と同じ無害化を通ります。公開デモ（`DEMO_MODE=1`）では使えません。
 
+## 外部ツールとつなぐ（concerto・sonata）
+
+waltz は WordPress の REST API（`/wp-json/wp/v2/posts`）と、opus connector プラグイン（`/wp-json/opus/v1`）と同じ形の口を持ちます。WordPress 向けに作られたツールから、waltz を「WordPress のサイト」として扱えます。設定は管理画面の「外部連携」（管理者のみ）。
+
+| 口 | 認証 | 用途 |
+|---|---|---|
+| `GET /wp-json/wp/v2/posts`（`page`・`per_page`・`_fields`・`search`・`slug`）・`GET /wp-json/wp/v2/posts/{id}` | 不要（公開記事だけ） | 記事の取り込み。件数は `X-WP-Total`・`X-WP-TotalPages` |
+| `GET /wp-json/opus/v1/ping` | `X-Opus-Token` | 接続テスト |
+| `GET /wp-json/opus/v1/posts/{id}` | `X-Opus-Token` | 今の本文（Markdown）と指紋 `content_hash`（sha256）。下書きも読める |
+| `POST /wp-json/opus/v1/posts/{id}` | `X-Opus-Token` | 本文の差し替え。`expected_hash` が今の本文と違えば 409。`content` は HTML（`content_format: "markdown"` も可）。`title`・`excerpt`・`status` なども受け付ける |
+| `POST /wp-json/opus/v1/posts` | `X-Opus-Token` | 記事の新規作成。`title`・`content` 必須、既定は下書き（`status: "publish"` で公開）。`tags`・`category`・`slug`・`seo_title`・`seo_description`・`featured_image_url` |
+
+- **接続トークン**は「外部連携」で接続先ごとに発行します。平文は発行した画面で一度だけ表示し、DB にはハッシュだけを保存します。失効させるとすぐ使えなくなります。認証の失敗が続く送信元は10分止めます
+- **concerto**: メディアを「WordPress」で登録し、接続トークンを貼ると、記事の取り込み・評価・改善の反映まで動きます。concerto の計測タグは「外部連携」にコードを貼ると全ページに入ります
+- HTML で送られた本文は Markdown に戻して保存します（自サイトの絶対 URL はサイト内のパスへ、script・iframe・フォームは除去）。日本語の太字・斜体で Markdown にすると崩れる箇所（`**結論：**締め` など）は HTML タグのまま残します
+- 固定ページ・カテゴリ・メディアの API はありません。公開デモ（`DEMO_MODE=1`）では書き込みの口を止めています
+
 ## 設定（環境変数）
 
 | 変数 | 説明 |
@@ -181,11 +198,12 @@ npm run typecheck
 npm run lint
 npm run db:generate   # schema.ts を変えたらマイグレーションを作る（起動時に自動適用）
 npm run test:wp-import  # WordPress 取り込みの確認（ネットワーク不要）
+npm run test:integrations  # 外部連携の口の確認（ネットワーク不要）
 ```
 
 ## 次に作るもの
 
-ダイレクトメッセージ、通報、画像付き投稿、メンション、非公開コミュニティ、記事の取り込み API、Webhook（CRM/MA 連携）、OAuth ログイン。
+ダイレクトメッセージ、通報、画像付き投稿、メンション、非公開コミュニティ、Webhook（CRM/MA 連携）、OAuth ログイン。
 
 ## 商用サポート
 
