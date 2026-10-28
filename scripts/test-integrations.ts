@@ -204,6 +204,11 @@ async function main() {
     assert.deepEqual(v.related_links, [{ url: "https://opus-inc.jp/blog/x", title: "opus の記事" }]);
     assert.equal(a.updatedAt.toISOString(), "2026-09-01T00:00:00.000Z");
     assert.equal(w.serializePost(a, SITE).modified, "2026-09-01T09:00:00");
+    assert.deepEqual(w.serializePost({ ...a, coverUrl: "/uploads/c-0123456789ab.png" }, SITE, { slug: "news", name: "お知らせ" }).waltz, {
+      cover_url: `${SITE}/uploads/c-0123456789ab.png`,
+      category: { slug: "news", name: "お知らせ" },
+      excerpt: a.excerpt,
+    });
     // 関連だけを足す（本文は触らない）。自分自身は入らない
     const u = w.updatePost(db, a.id, { related_post_slugs: ["html-post", a.slug], expected_hash: v.content_hash }, { siteUrl: SITE });
     assert.deepEqual(w.connectorView(u).related_post_slugs, ["html-post"]);

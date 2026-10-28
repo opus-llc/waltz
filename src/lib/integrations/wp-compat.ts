@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { and, count, desc, eq, like, lte, or } from "drizzle-orm";
+import { and, count, desc, eq, inArray, like, lte, or } from "drizzle-orm";
 import TurndownService from "turndown";
 import { gfm } from "turndown-plugin-gfm";
 import { keepCjkEmphasis } from "../turndown-cjk";
@@ -8,7 +8,7 @@ import * as schema from "../../db/schema";
 import type { Article } from "../../db/schema";
 import { renderMarkdown, plainExcerpt } from "../markdown";
 import { isValidSlug, slugify } from "../format";
-import { BASE_PATH } from "../base-path";
+import { BASE_PATH, withBase } from "../base-path";
 import { setArticleTags } from "../article-tags";
 import { isReservedSlug } from "../paths";
 import { parseRelatedLinks, parseRelatedSlugs, type RelatedLink } from "../related";
@@ -78,7 +78,16 @@ export function wpStatus(a: Pick<Article, "status" | "publishedAt">): "publish" 
 
 export const articleUrl = (siteUrl: string, slug: string) => `${siteUrl}${articlePath(slug)}`;
 
-export function serializePost(a: Article, siteUrl: string) {
+const absoluteUrl = (u: string, siteUrl: string) => {
+  if (!u.startsWith("/")) return u;
+  try {
+    return `${new URL(siteUrl).origin}${withBase(u)}`;
+  } catch {
+    return u;
+  }
+};
+
+export function serializePost(a: Article, siteUrl: string, category?: { slug: string; name: string } | null) {
   const published = a.publishedAt ?? a.createdAt;
   return {
     id: a.id,
@@ -94,6 +103,12 @@ export function serializePost(a: Article, siteUrl: string) {
     content: { rendered: absolutize(renderMarkdown(a.body).html, siteUrl), protected: false },
     excerpt: { rendered: a.excerpt ? `<p>${escapeHtml(a.excerpt)}</p>\n` : "", protected: false },
     featured_media: 0,
+    // waltz で足した項目（WordPress には無い）。一覧のカードを作る側が、画像やカテゴリ名のために別の API を叩かずに済むように
+    waltz: {
+      cover_url: a.coverUrl ? absoluteUrl(a.coverUrl, siteUrl) : null,
+      category: category ?? null,
+      excerpt: a.excerpt,
+    },
   };
 }
 
@@ -124,6 +139,14 @@ export function parseListQuery(params: URLSearchParams): ListQuery {
     search: params.get("search")?.trim() || undefined,
     slug: params.get("slug")?.trim() || undefined,
   };
+}
+
+/** 記事 ID → カテゴリ（一覧の waltz.category 用） */
+export function categoriesFor(db: DB, rows: Article[]): Map<number, { slug: string; name: string }> {
+  const ids = [...new Set(rows.map((r) => r.categoryId).filter((v): v is number => v !== null))];
+  const cats = ids.length ? db.select({ id: categories.id, slug: categories.slug, name: categories.name }).from(categories).where(inArray(categories.id, ids)).all() : [];
+  const byId = new Map(cats.map((c) => [c.id, { slug: c.slug, name: c.name }]));
+  return new Map(rows.filter((r) => r.categoryId && byId.has(r.categoryId)).map((r) => [r.id, byId.get(r.categoryId!)!]));
 }
 
 export function listPublishedPosts(db: DB, q: ListQuery): { rows: Article[]; total: number; totalPages: number } {

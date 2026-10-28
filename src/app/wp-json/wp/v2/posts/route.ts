@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { getSettings } from "@/lib/settings";
 import { handleError, wpJson } from "@/lib/integrations/http";
-import { listPublishedPosts, parseListQuery, pickFields, serializePost } from "@/lib/integrations/wp-compat";
+import { categoriesFor, listPublishedPosts, parseListQuery, pickFields, serializePost } from "@/lib/integrations/wp-compat";
 
 export const dynamic = "force-dynamic";
 
@@ -12,8 +12,9 @@ export function GET(req: Request) {
     const { rows, total, totalPages } = listPublishedPosts(db, parseListQuery(params));
     const { siteUrl } = getSettings();
     const fields = params.get("_fields");
+    const cats = categoriesFor(db, rows);
     return wpJson(
-      rows.map((a) => pickFields(serializePost(a, siteUrl), fields)),
+      rows.map((a) => pickFields(serializePost(a, siteUrl, cats.get(a.id)), fields)),
       { headers: { "X-WP-Total": String(total), "X-WP-TotalPages": String(totalPages) } },
     );
   } catch (e) {
