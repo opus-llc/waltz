@@ -37,6 +37,29 @@ function concertoOrigin(raw: string): string | null {
   }
 }
 
+function siteHost(siteUrl: string): string | null {
+  try {
+    return new URL(siteUrl).hostname;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 計測タグの読み込み。**サイトURL（SITE_URL）のホストで開いたときだけ動かす。**
+ * 中継の手前の URL（Cloud Run の直接の URL など）や手元の確認で開いた分を、本番の計測に混ぜないため。
+ * concerto のタグは、next/script だと document.currentScript が取れず data-site が読めないので、設定を先にグローバルへ置いてから読み込む
+ */
+function analyticsLoader(o: { host: string; gtm: string | null; ga4: string | null; tagUrl: string | null; concerto: { site: string; src: string } | null }): string | null {
+  const parts: string[] = [];
+  if (o.gtm) parts.push(`w.dataLayer=w.dataLayer||[];w.dataLayer.push({"gtm.start":Date.now(),event:"gtm.js"});load("https://www.googletagmanager.com/gtm.js?id="+${JSON.stringify(o.gtm)});`);
+  if (o.ga4) parts.push(`w.dataLayer=w.dataLayer||[];w.gtag=w.gtag||function(){w.dataLayer.push(arguments)};w.gtag("js",new Date());w.gtag("config",${JSON.stringify(o.ga4)});load("https://www.googletagmanager.com/gtag/js?id="+${JSON.stringify(o.ga4)});`);
+  if (o.tagUrl) parts.push(`load(${JSON.stringify(o.tagUrl)});`);
+  if (o.concerto) parts.push(`w.concertoSettings={site:${JSON.stringify(o.concerto.site)}};load(${JSON.stringify(o.concerto.src)});`);
+  if (!parts.length) return null;
+  return `(function(w,d){if(location.hostname!==${JSON.stringify(o.host)})return;function load(src){var j=d.createElement("script");j.async=true;j.src=src;d.head.appendChild(j)}${parts.join("")}})(window,document);`;
+}
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const s = getSettings();
   const accent = HEX.test(s.accentColor) ? s.accentColor : "#4f46e5";
@@ -47,6 +70,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   const posthog = !isDemo() && /^phc_[A-Za-z0-9]{20,80}$/.test(s.posthogKey) ? s.posthogKey : null;
   const concertoSite = !isDemo() && UUID.test(s.concertoSiteId) ? s.concertoSiteId.toLowerCase() : null;
   const concertoSrc = concertoSite ? concertoOrigin(s.concertoOrigin) : null;
+  const host = siteHost(s.siteUrl);
+  const loader = host ? analyticsLoader({ host, gtm, ga4, tagUrl, concerto: concertoSite && concertoSrc ? { site: concertoSite, src: `${concertoSrc}/tag.js` } : null }) : null;
   return (
     <html lang="ja" style={{ ["--accent" as string]: accent }}>
       <body className="min-h-dvh antialiased">
@@ -56,28 +81,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </noscript>
         )}
         {children}
-        {gtm && (
-          <Script id="gtm" strategy="afterInteractive">
-            {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtm}');`}
-          </Script>
-        )}
-        {ga4 && (
-          <>
-            <Script src={`https://www.googletagmanager.com/gtag/js?id=${ga4}`} strategy="afterInteractive" />
-            <Script id="ga4" strategy="afterInteractive">
-              {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${ga4}');`}
-            </Script>
-          </>
-        )}
-        {tagUrl && <Script src={tagUrl} strategy="afterInteractive" />}
-        {posthog && <PostHogInit apiKey={posthog} apiHost={s.posthogHost} />}
-        {concertoSite && concertoSrc && (
-          <>
-            {/* next/script で読み込むと document.currentScript が取れず data-site が読めないため、設定を先にグローバルへ置く（concerto の GTM 用と同じ形） */}
-            <Script id="concerto-settings" strategy="beforeInteractive">{`window.concertoSettings={site:"${concertoSite}"};`}</Script>
-            <Script src={`${concertoSrc}/tag.js`} strategy="afterInteractive" />
-          </>
-        )}
+        {loader && <Script id="analytics" strategy="afterInteractive">{loader}</Script>}
+        {posthog && <PostHogInit apiKey={posthog} apiHost={s.posthogHost} host={host} />}
       </body>
     </html>
   );

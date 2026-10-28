@@ -7,8 +7,10 @@ import { useEffect } from "react";
  * 設定は sonata 本体と揃える: 人物のプロフィールはログイン等で identify した人だけ作り、ページ離脱も記録する。
  * ページビューは画面遷移（history）ごとに記録する
  */
-export function PostHogInit({ apiKey, apiHost }: { apiKey: string; apiHost: string }) {
+export function PostHogInit({ apiKey, apiHost, host }: { apiKey: string; apiHost: string; host: string | null }) {
   useEffect(() => {
+    // サイトURLのホストで開いたときだけ（中継の手前の URL や手元の確認を本番の計測に混ぜない）
+    if (!host || window.location.hostname !== host) return;
     let cancelled = false;
     import("posthog-js").then(({ default: posthog }) => {
       if (cancelled || posthog.__loaded) return;
@@ -23,6 +25,6 @@ export function PostHogInit({ apiKey, apiHost }: { apiKey: string; apiHost: stri
     return () => {
       cancelled = true;
     };
-  }, [apiKey, apiHost]);
+  }, [apiKey, apiHost, host]);
   return null;
 }
